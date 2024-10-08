@@ -21,15 +21,15 @@ class User(Base):
     4. get_user_info(): Returns the user's information, excluding sensitive data like the password.
     """
     __tablename__ = 'users'
-    Username = Column(String(255), primary_key=True)
+    Username = Column(String(255), unique=True, nullable=False)
     Password = Column(String(255), nullable=False)
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Score = Column(Integer, default=0)
 
-    def __init__(self, Username: str, Password: str, ID: int, Score: int = 0):
+    def __init__(self, Username: str, Password: str, Score: int = 0):
         self.Username = Username
         self.Password = self.hash_password(Password)
-        self.ID = ID
+
         self.Score = Score
 
     def hash_password(self, Password: str) -> str:
@@ -71,12 +71,72 @@ class User(Base):
         """
         Return a string representation of the user object.
         """
-        return f"User(username={self.Username}), ID={self.ID}, Score={self.Score}"
+        return f"User(username={self.Username}, ID={self.ID}, Score={self.Score})"
 
     @staticmethod
-    def add(user):
+    def add(user: 'User'):
         """
         Add a user to the database.
         """
-        db.session.add(user)
-        db.session.commit()
+        if not isinstance(user, User):
+            raise TypeError(
+                "The argument must be an instance of the User class.")
+        if user is None:
+            raise ValueError("User is None.")
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+
+    @staticmethod
+    def get_user(username: str) -> 'User':
+        """
+        Retrieve a user from the database by username.
+        """
+        return db.session.query(User).filter_by(Username=username).first()
+
+    @staticmethod
+    def update(user: 'User'):
+        """
+        Update a user in the database.
+        """
+        if not isinstance(user, User):
+            raise TypeError(
+                "The argument must be an instance of the User class.")
+        if user is None:
+            raise ValueError("User is None.")
+        try:
+            is_user = db.session.query(User).filter_by(ID=user.ID).first()
+            if is_user:
+                db.session.merge(user)
+                db.session.commit()
+            else:
+                raise ValueError("User does not exist.")
+
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+
+    @staticmethod
+    def delete(user: 'User'):
+        """
+        Delete a user from the database.
+        """
+        if not isinstance(user, User):
+            raise TypeError(
+                "The argument must be an instance of the User class.")
+        if user is None:
+            raise ValueError("User is None.")
+        try:
+            is_user = db.session.query(User).filter_by(ID=user.ID).first()
+            if is_user:
+                db.session.delete(user)
+                db.session.commit()
+            else:
+                raise ValueError("User does not exist.")
+
+        except Exception as e:
+            db.session.rollback()
+            print(e)

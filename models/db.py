@@ -1,4 +1,4 @@
-from requests import session
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
@@ -13,12 +13,17 @@ class DB:
     @property
     def session(self) -> Session:
         if not self.__session:
-            Session = sessionmaker(bind=self.engine)
-            self.__session = Session()
+            session = sessionmaker(bind=self.engine)
+            self.__session = session()
         return self.__session
 
-    def create_tables(self):
-        Base.metadata.create_all(self.engine, checkfirst=True)
+    @staticmethod
+    def create_tables():
+        Base.metadata.create_all(db.engine, checkfirst=True)
+
+    @staticmethod
+    def drop_tables():
+        Base.metadata.drop_all(db.engine)
 
 
 db = DB()
