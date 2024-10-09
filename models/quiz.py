@@ -18,18 +18,20 @@ class Quiz(Base):
     """
     __tablename__ = 'quizzes'
     quiz_id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), unique=True, nullable=False)
     questions = relationship("Question", back_populates='quiz')
     total_score = Column(Integer, nullable=False)
     quiz_category = Column(String(255), nullable=False)
     time_limit = Column(Integer, nullable=False)
 
-    def __init__(self, total_score: int, quiz_category: str, time_limit: int):
+    def __init__(self, name, total_score: int, quiz_category: str, time_limit: int):
         """
         Initialize a new Quiz object.
         """
 
         self.questions = []
 
+        self.name = name
         self.total_score = total_score
         self.quiz_category = quiz_category
         self.time_limit = time_limit
@@ -57,6 +59,22 @@ class Quiz(Base):
 
         self.questions.append(question)
 
+    def add_questions(self, questions: list):
+        """
+        Add a question to the quiz.
+
+        Args:
+        - question (Question): A Question object to add to the quiz.
+
+        Raises:
+        - TypeError: If the argument is not an instance of the Question class.
+        """
+        for question in questions:
+            if not isinstance(question, Question):
+                raise TypeError(
+                    "The argument must be an instance of the Question class.")
+            self.questions.append(question)
+
     def calculate_total_score(self):
         """
         Calculate the total possible score for the quiz by summing 
@@ -81,3 +99,9 @@ class Quiz(Base):
             if question.question_id == question_id:
                 return question
             raise ValueError(f"Question with ID {question_id} not found.")
+
+    def __repr__(self) -> str:
+        """
+        Return a string representation of the quiz object.
+        """
+        return f"Quiz(name={self.name}, total_score={self.total_score}, quiz_category={self.quiz_category}, time_limit={self.time_limit})"
