@@ -30,6 +30,6 @@ def mock_quizes():
             # it will automatically be added to quiz.questions.
             # Therefore, there is no need to call quiz.add_question,
             # as it would result in adding the question twice.
-            Question(f"Question {j}", choices, "A", randint(
-                1, 10), "General Knowledge", difficulties[randint(0, 2)], quiz)
+            quiz.add_question(f"Question {j}", choices, "A", randint(
+                1, 10), "General Knowledge", difficulties[randint(0, 2)])
         Quiz.add(quiz)

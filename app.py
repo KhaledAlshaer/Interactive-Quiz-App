@@ -1,6 +1,7 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 app = Flask(__name__)
+
 
 @app.route("/register")
 def register():
@@ -11,8 +12,9 @@ def register():
     - Validate and save the user to the database.
     - Redirect to login page or show success message after successful registration.
     """
-    
+
     return "hi"
+
 
 @app.route("/login")
 def log_in():
@@ -25,6 +27,7 @@ def log_in():
     """
     return "hi"
 
+
 @app.route("/profile")
 def profile():
     """
@@ -34,15 +37,33 @@ def profile():
     """
     return "hi"
 
-@app.route("/quizzes/<quiz_id>")
-def quiz(quiz_id):
+
+@app.route("/quizzes")
+def quizzes():
+    from models.quiz import Quiz
     """
     Display the quiz page.
     - Fetch the quiz details based on quiz_id.
     - Display the questions and answer options.
     - Track the user's progress and responses.
     """
-    return "hi"
+
+    all_quizzes = [quiz.to_dict() for quiz in Quiz.get_all_quizzes()]
+    return jsonify(all_quizzes), 200
+
+
+@app.route("/quiz/<quiz_id>")
+def quiz(quiz_id):
+    from models.quiz import Quiz
+    """
+    Display the quiz page.
+    - Fetch the quiz details based on quiz_id.
+    - Display the questions and answer options.
+    - Track the user's progress and responses.
+    """
+    quiz = Quiz.get_quiz_by_id(quiz_id)
+    return jsonify(quiz.to_dict()), 200
+
 
 @app.route("/results/<quiz_id>")
 def results(quiz_id):
@@ -53,6 +74,7 @@ def results(quiz_id):
     - Provide feedback on each question (e.g., correct/incorrect).
     """
     return "hi"
+
 
 @app.route("/submit_quiz/<quiz_id>", methods=["POST"])
 def submit_quiz(quiz_id):
@@ -65,6 +87,7 @@ def submit_quiz(quiz_id):
     """
     return "hi"
 
+
 @app.route("/logout")
 def log_out():
     """
@@ -73,3 +96,7 @@ def log_out():
     - Redirect to the login page or home page.
     """
     return "hi"
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

@@ -57,6 +57,16 @@ class Question(Base):
     def __str__(self):
         return f"{self.text} {self.choices} {self.correct_answer} {self.score} {self.category} {self.difficulty}"
 
+    def to_dict(self):
+        return {
+            "text": self.text,
+            "choices": self.choices,
+            "correct_answer": self.correct_answer,
+            "score": self.score,
+            "category": self.category,
+            "difficulty": self.difficulty
+        }
+
     # @staticmethod
     # def add(question: 'Question'):
     #     """

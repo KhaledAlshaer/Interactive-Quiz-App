@@ -11,4 +11,7 @@ from add_mock_data import mock_data
 # mock_data.mock_users()
 # mock_data.mock_quizes()
 
+# u = User.get_user("Ahmed Arafa")
+
+# print(u)
 

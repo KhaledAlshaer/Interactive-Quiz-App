@@ -101,6 +101,16 @@ class Quiz(Base):
     def __str__(self):
         return f"Quiz: {self.name}, Category: {self.quiz_category}, Number of Questions: {self.number_of_questions}, Total Score: {self.total_score}, Time Limit: {self.time_limit} minutes."
 
+    def to_dict(self):
+        return {
+            "quiz_id": self.quiz_id,
+            "name": self.name,
+            "questions": [question.to_dict() for question in self.questions],
+            "total_score": self.total_score,
+            "quiz_category": self.quiz_category,
+            "time_limit": self.time_limit
+        }
+
     @staticmethod
     def add(quiz: 'Quiz'):
         """
