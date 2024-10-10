@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String
 from .question import Question
 from sqlalchemy.orm import relationship
 from .base import Base
+from .db import db
 
 
 class Quiz(Base):
@@ -28,8 +29,6 @@ class Quiz(Base):
         """
         Initialize a new Quiz object.
         """
-
-        self.questions = []
 
         self.name = name
         self.total_score = total_score
@@ -82,7 +81,7 @@ class Quiz(Base):
         """
         self.total_score = sum(question.score for question in self.questions)
 
-    def get_question_by_id(self, question_id: int):
+    def get_question_by_id(self, question_id: int) -> Question:
         """
          Retrieve a question from the quiz by its question_id.
 
@@ -98,10 +97,86 @@ class Quiz(Base):
         for question in self.questions:
             if question.question_id == question_id:
                 return question
-            raise ValueError(f"Question with ID {question_id} not found.")
+        raise ValueError(f"Question with ID {question_id} not found.")
 
-    def __repr__(self) -> str:
+    def __str__(self):
+        return f"Quiz: {self.name}, Category: {self.quiz_category}, Number of Questions: {self.number_of_questions}, Total Score: {self.total_score}, Time Limit: {self.time_limit} minutes."
+
+    @staticmethod
+    def add(quiz: 'Quiz'):
         """
-        Return a string representation of the quiz object.
+        Add a quiz to the database.
         """
-        return f"Quiz(name={self.name}, total_score={self.total_score}, quiz_category={self.quiz_category}, time_limit={self.time_limit})"
+        if not isinstance(quiz, Quiz):
+            raise TypeError(
+                "The argument must be an instance of the Quiz class.")
+        if quiz is None:
+            raise ValueError("Quiz is None.")
+        try:
+            db.session.add(quiz)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+
+    @staticmethod
+    def get_quiz(name: str) -> 'Quiz':
+        """
+        Retrieve a quiz from the database by name.
+        """
+        return db.session.query(Quiz).filter_by(name=name).first()
+
+    @staticmethod
+    def get_all_quizzes() -> list:
+        """
+        Retrieve all quizzes from the database.
+        """
+        return db.session.query(Quiz).all()
+
+    @staticmethod
+    def update(quiz: 'Quiz'):
+        """
+        Update a quiz in the database.
+        """
+        if not isinstance(quiz, Quiz):
+            raise TypeError(
+                "The argument must be an instance of the Quiz class.")
+        if quiz is None:
+            raise ValueError("Quiz is None.")
+        try:
+            is_quiz = db.session.query(Quiz).filter_by(
+                quiz_id=quiz.quiz_id).first()
+            if is_quiz:
+                db.session.merge(quiz)
+                db.session.commit()
+            else:
+                raise ValueError("Quiz does not exist.")
+
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+
+    @staticmethod
+    def delete(quiz: 'Quiz'):
+        """
+        Delete a quiz from the database.
+        """
+        if not isinstance(quiz, Quiz):
+            raise TypeError(
+                "The argument must be an instance of the Quiz class.")
+        if quiz is None:
+            raise ValueError("Quiz is None.")
+        try:
+            is_quiz = db.session.query(Quiz).filter_by(
+                quiz_id=quiz.quiz_id).first()
+            if is_quiz:
+                for question in quiz.questions:
+                    db.session.delete(question)
+                db.session.delete(quiz)
+                db.session.commit()
+            else:
+                raise ValueError("Quiz does not exist.")
+
+        except Exception as e:
+            db.session.rollback()
+            print(e)

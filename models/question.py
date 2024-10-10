@@ -2,6 +2,7 @@
 from sqlalchemy import JSON, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from .base import Base
+from .db import db
 
 
 class Question(Base):
@@ -20,7 +21,7 @@ class Question(Base):
     __tablename__ = 'questions'
     question_id = Column(Integer, primary_key=True,
                          autoincrement=True)
-    quiz_id = Column(Integer, ForeignKey('quizzes.quiz_id'))
+    quiz_id = Column(Integer, ForeignKey('quizzes.quiz_id'), nullable=False)
     quiz = relationship('Quiz', back_populates='questions')
     text = Column(String(255), nullable=False)
     choices = Column(JSON, nullable=False)
@@ -44,9 +45,28 @@ class Question(Base):
         self.category = category
         self.difficulty = difficulty
         self.quiz = quiz
+        self.quiz_id = quiz.quiz_id
 
     def is_correct(self, answer: str) -> bool:
         """
         Check if the provided answer matches the correct answer.
         """
         return answer == self.correct_answer
+
+    def __str__(self):
+        return f"{self.text} {self.choices} {self.correct_answer} {self.score} {self.category} {self.difficulty}"
+
+    # @staticmethod
+    # def add(question: 'Question'):
+    #     """
+    #     Add a new question to the database.
+    #     """
+    #     if not isinstance(question, Question):
+    #         raise TypeError(
+    #             "The argument must be an instance of the Question class.")
+    #     if question is None:
+    #         raise ValueError("The question cannot be None.")
+
+    #     question.quiz.questions.append(question)
+
+    #     Quiz.update(question.quiz)
