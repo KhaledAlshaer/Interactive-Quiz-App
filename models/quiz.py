@@ -1,3 +1,4 @@
+from math import e
 from sqlalchemy import Column, Integer, String
 from .question import Question
 from sqlalchemy.orm import relationship
@@ -25,13 +26,13 @@ class Quiz(Base):
     quiz_category = Column(String(255), nullable=False)
     time_limit = Column(Integer, nullable=False)
 
-    def __init__(self, name, total_score: int, quiz_category: str, time_limit: int):
+    def __init__(self, name: str, quiz_category: str, time_limit: int):
         """
         Initialize a new Quiz object.
         """
 
         self.name = name
-        self.total_score = total_score
+        self.total_score = 0
         self.quiz_category = quiz_category
         self.time_limit = time_limit
 
@@ -72,14 +73,19 @@ class Quiz(Base):
             if not isinstance(question, Question):
                 raise TypeError(
                     "The argument must be an instance of the Question class.")
-            self.questions.append(question)
+            self.add_question(question)
 
     def calculate_total_score(self):
         """
         Calculate the total possible score for the quiz by summing 
         the scores of all the questions.
         """
-        self.total_score = sum(question.score for question in self.questions)
+        self.total_score = 0
+        print("-----------------")
+        for question in self.questions:
+            print(question, end="\n\t")
+            self.total_score += question.score
+        print("-----------------")
 
     def get_question_by_id(self, question_id: int) -> Question:
         """
@@ -113,6 +119,7 @@ class Quiz(Base):
         if quiz is None:
             raise ValueError("Quiz is None.")
         try:
+            quiz.calculate_total_score()
             db.session.add(quiz)
             db.session.commit()
         except Exception as e:
@@ -144,6 +151,8 @@ class Quiz(Base):
         if quiz is None:
             raise ValueError("Quiz is None.")
         try:
+            quiz.calculate_total_score()
+
             is_quiz = db.session.query(Quiz).filter_by(
                 quiz_id=quiz.quiz_id).first()
             if is_quiz:
