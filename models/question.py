@@ -67,7 +67,7 @@ class Question(Base):
             "difficulty": self.difficulty
         }
 
-    # @staticmethod
+    # @classmethod
     # def add(question: 'Question'):
     #     """
     #     Add a new question to the database.

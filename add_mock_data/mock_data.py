@@ -12,7 +12,7 @@ def mock_users():
         User.add(user)
     except Exception as e:
         pass
-    for i in range(10, 1000):
+    for i in range(1, 100):
         user = User(f"User {i}", f"pass{randint(100,9999)}", randint(0, 1000))
         User.add(user)
 

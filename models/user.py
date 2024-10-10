@@ -1,7 +1,9 @@
 import hashlib
+import traceback
 from .base import Base
 from .db import db
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
 
 class User(Base):
@@ -25,6 +27,9 @@ class User(Base):
     Password = Column(String(255), nullable=False)
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Score = Column(Integer, default=0)
+    # quizzes = relationship("UserQuiz", back_populates="user")
+    quizzes = relationship(
+        "Quiz",  secondary="users_quizzes", back_populates="users")
 
     def __init__(self, Username: str, Password: str, Score: int = 0):
         self.Username = Username
@@ -45,11 +50,11 @@ class User(Base):
         """
         return self.Password == self.hash_password(Password)
 
-    def update_score(self, new_score: int):
+    def update_score(self):
         """
         Update the user's total score.
         """
-        self.Score += new_score
+        self.Score = sum([quiz.total_score for quiz in self.quizzes])
 
     def reset_password(self, new_password: str):
         """
@@ -73,8 +78,8 @@ class User(Base):
         """
         return f"User(username={self.Username}, ID={self.ID}, Score={self.Score})"
 
-    @staticmethod
-    def add(user: 'User'):
+    @classmethod
+    def add(cls, user: 'User'):
         """
         Add a user to the database.
         """
@@ -88,17 +93,18 @@ class User(Base):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
 
-    @staticmethod
-    def get_user(username: str) -> 'User':
+    @classmethod
+    def get_user(cls, username: str) -> 'User':
         """
         Retrieve a user from the database by username.
         """
         return db.session.query(User).filter_by(Username=username).first()
 
-    @staticmethod
-    def update(user: 'User'):
+    @classmethod
+    def update(cls, user: 'User'):
         """
         Update a user in the database.
         """
@@ -110,6 +116,7 @@ class User(Base):
         try:
             is_user = db.session.query(User).filter_by(ID=user.ID).first()
             if is_user:
+                user.update_score()
                 db.session.merge(user)
                 db.session.commit()
             else:
@@ -117,10 +124,11 @@ class User(Base):
 
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
 
-    @staticmethod
-    def delete(user: 'User'):
+    @classmethod
+    def delete(cls, user: 'User'):
         """
         Delete a user from the database.
         """
@@ -139,4 +147,5 @@ class User(Base):
 
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)

@@ -1,4 +1,5 @@
-from math import e
+
+import traceback
 from sqlalchemy import Column, Integer, String
 from .question import Question
 from sqlalchemy.orm import relationship
@@ -7,6 +8,7 @@ from .db import db
 
 
 class Quiz(Base):
+    from .users_quizzes import UserQuiz
     """
      This class represents a quiz made up of multiple questions.
 
@@ -21,11 +23,13 @@ class Quiz(Base):
     __tablename__ = 'quizzes'
     quiz_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), unique=True, nullable=False)
-    questions = relationship(
-        "Question", back_populates='quiz', cascade="all, delete-orphan")
     total_score = Column(Integer, nullable=False)
     quiz_category = Column(String(255), nullable=False)
     time_limit = Column(Integer, nullable=False)
+    questions = relationship(
+        "Question", back_populates='quiz', cascade="all, delete-orphan")
+    users = relationship("User",  secondary="users_quizzes",
+                         back_populates="quizzes")
 
     def __init__(self, name: str, quiz_category: str, time_limit: int):
         """
@@ -75,7 +79,7 @@ class Quiz(Base):
 
     def calculate_total_score(self):
         """
-        Calculate the total possible score for the quiz by summing 
+        Calculate the total possible score for the quiz by summing
         the scores of all the questions.
         """
         self.total_score = sum([question.score for question in self.questions])
@@ -111,8 +115,8 @@ class Quiz(Base):
             "time_limit": self.time_limit
         }
 
-    @staticmethod
-    def add(quiz: 'Quiz'):
+    @classmethod
+    def add(cls, quiz: 'Quiz'):
         """
         Add a quiz to the database.
         """
@@ -127,31 +131,32 @@ class Quiz(Base):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
 
-    @staticmethod
-    def get_quiz_by_name(name: str) -> 'Quiz':
+    @classmethod
+    def get_quiz_by_name(cls, name: str) -> 'Quiz':
         """
         Retrieve a quiz from the database by name.
         """
         return db.session.query(Quiz).filter_by(name=name).first()
 
-    @staticmethod
-    def get_quiz_by_id(id: int) -> 'Quiz':
+    @classmethod
+    def get_quiz_by_id(cls, id: int) -> 'Quiz':
         """
         Retrieve a quiz from the database by name.
         """
         return db.session.query(Quiz).filter_by(quiz_id=id).first()
 
-    @staticmethod
-    def get_all_quizzes() -> list:
+    @classmethod
+    def get_all_quizzes(cls) -> list:
         """
         Retrieve all quizzes from the database.
         """
         return db.session.query(Quiz).all()
 
-    @staticmethod
-    def update(quiz: 'Quiz'):
+    @classmethod
+    def update(cls, quiz: 'Quiz'):
         """
         Update a quiz in the database.
         """
@@ -173,10 +178,11 @@ class Quiz(Base):
 
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
 
-    @staticmethod
-    def delete(quiz: 'Quiz'):
+    @classmethod
+    def delete(cls, quiz: 'Quiz'):
         """
         Delete a quiz from the database.
         """
@@ -198,4 +204,5 @@ class Quiz(Base):
 
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
