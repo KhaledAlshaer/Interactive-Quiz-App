@@ -6,10 +6,9 @@ from models.db import db
 from models.quiz import Quiz
 from add_mock_data import mock_data
 
-db.drop_tables()
-db.create_tables()
-mock_data.mock_users()
-mock_data.mock_quizes()
+# db.drop_tables()
+# db.create_tables()
+# mock_data.mock_users()
+# mock_data.mock_quizes()
 
-# for q in quiz.Quiz.get_all_quizzes():
-#     Quiz.update(q)
+

@@ -21,7 +21,8 @@ class Quiz(Base):
     __tablename__ = 'quizzes'
     quiz_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), unique=True, nullable=False)
-    questions = relationship("Question", back_populates='quiz')
+    questions = relationship(
+        "Question", back_populates='quiz', cascade="all, delete-orphan")
     total_score = Column(Integer, nullable=False)
     quiz_category = Column(String(255), nullable=False)
     time_limit = Column(Integer, nullable=False)
@@ -80,12 +81,7 @@ class Quiz(Base):
         Calculate the total possible score for the quiz by summing 
         the scores of all the questions.
         """
-        self.total_score = 0
-        print("-----------------")
-        for question in self.questions:
-            print(question, end="\n\t")
-            self.total_score += question.score
-        print("-----------------")
+        self.total_score = sum([question.score for question in self.questions])
 
     def get_question_by_id(self, question_id: int) -> Question:
         """
@@ -127,11 +123,18 @@ class Quiz(Base):
             print(e)
 
     @staticmethod
-    def get_quiz(name: str) -> 'Quiz':
+    def get_quiz_by_name(name: str) -> 'Quiz':
         """
         Retrieve a quiz from the database by name.
         """
         return db.session.query(Quiz).filter_by(name=name).first()
+
+    @staticmethod
+    def get_quiz_by_id(id: int) -> 'Quiz':
+        """
+        Retrieve a quiz from the database by name.
+        """
+        return db.session.query(Quiz).filter_by(quiz_id=id).first()
 
     @staticmethod
     def get_all_quizzes() -> list:
@@ -179,8 +182,8 @@ class Quiz(Base):
             is_quiz = db.session.query(Quiz).filter_by(
                 quiz_id=quiz.quiz_id).first()
             if is_quiz:
-                for question in quiz.questions:
-                    db.session.delete(question)
+                # for question in quiz.questions:
+                #     db.session.delete(question)
                 db.session.delete(quiz)
                 db.session.commit()
             else:

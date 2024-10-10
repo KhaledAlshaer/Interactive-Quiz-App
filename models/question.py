@@ -21,8 +21,9 @@ class Question(Base):
     __tablename__ = 'questions'
     question_id = Column(Integer, primary_key=True,
                          autoincrement=True)
-    quiz_id = Column(Integer, ForeignKey('quizzes.quiz_id'), nullable=False)
-    quiz = relationship('Quiz', back_populates='questions')
+    quiz_id = Column(Integer, ForeignKey('quizzes.quiz_id'))
+    quiz = relationship('Quiz', back_populates='questions',
+                        )
     text = Column(String(255), nullable=False)
     choices = Column(JSON, nullable=False)
     correct_answer = Column(String(255), nullable=False)
