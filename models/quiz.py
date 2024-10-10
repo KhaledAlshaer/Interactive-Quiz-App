@@ -44,7 +44,8 @@ class Quiz(Base):
         """
         return len(self.questions)
 
-    def add_question(self, question):
+    def add_question(self, text: str, choices: list,
+                     correct_answer: str, score: int, category: str, difficulty: str):
         """
         Add a question to the quiz.
 
@@ -54,27 +55,23 @@ class Quiz(Base):
         Raises:
         - TypeError: If the argument is not an instance of the Question class.
         """
-        if not isinstance(question, Question):
-            raise TypeError(
-                "The argument must be an instance of the Question class.")
+        Question(text, choices, correct_answer,
+                 score, category, difficulty, self)
+    # def add_questions(self, questions: list):
+    #     """
+    #     Add a question to the quiz.
 
-        self.questions.append(question)
+    #     Args:
+    #     - question (Question): A Question object to add to the quiz.
 
-    def add_questions(self, questions: list):
-        """
-        Add a question to the quiz.
-
-        Args:
-        - question (Question): A Question object to add to the quiz.
-
-        Raises:
-        - TypeError: If the argument is not an instance of the Question class.
-        """
-        for question in questions:
-            if not isinstance(question, Question):
-                raise TypeError(
-                    "The argument must be an instance of the Question class.")
-            self.add_question(question)
+    #     Raises:
+    #     - TypeError: If the argument is not an instance of the Question class.
+    #     """
+    #     for question in questions:
+    #         if not isinstance(question, Question):
+    #             raise TypeError(
+    #                 "The argument must be an instance of the Question class.")
+    #         self.add_question(question)
 
     def calculate_total_score(self):
         """
