@@ -11,5 +11,3 @@ from models.quiz import Quiz
 # db.create_tables()
 # mock_data.mock_users()
 # mock_data.mock_quizes()
-
-

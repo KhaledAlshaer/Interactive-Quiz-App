@@ -1,12 +1,14 @@
 import hashlib
 import traceback
 from .base import Base
+from .users_quizzes import UserQuiz
 from .db import db
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 
 class User(Base):
+    from .users_quizzes import UserQuiz
     """
     This class represents a user in the Interactive Quiz Application.
 
@@ -31,11 +33,9 @@ class User(Base):
     quizzes = relationship(
         "Quiz",  secondary="users_quizzes", back_populates="users")
 
-    def __init__(self, Username: str, Password: str, Score: int = 0):
+    def __init__(self, Username: str, Password: str):
         self.Username = Username
         self.Password = self.hash_password(Password)
-
-        self.Score = Score
 
     def hash_password(self, Password: str) -> str:
         """
@@ -116,7 +116,7 @@ class User(Base):
         try:
             is_user = db.session.query(User).filter_by(ID=user.ID).first()
             if is_user:
-                user.update_score()
+                # user.update_score()
                 db.session.merge(user)
                 db.session.commit()
             else:

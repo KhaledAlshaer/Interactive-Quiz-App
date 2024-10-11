@@ -17,13 +17,23 @@ def register():
 
 
 @app.route("/login")
-def log_in():
+def login():
     """
     Handle user login.
     - Display login form for existing users.
     - Verify the entered username and hashed password against the database.
     - Create a user session on successful login.
     - Redirect to the user's profile or the main dashboard after login.
+    """
+    return "hi"
+
+
+@app.route("/logout")
+def logout():
+    """
+    Log out the user.
+    - Clear the user session and log them out.
+    - Redirect to the login page or home page.
     """
     return "hi"
 
@@ -65,37 +75,10 @@ def quiz(quiz_id):
     return jsonify(quiz.to_dict()), 200
 
 
-@app.route("/results/<quiz_id>")
-def results(quiz_id):
-    """
-    Display the quiz results.
-    - Fetch the user's answers and compare them with the correct answers.
-    - Calculate the score and show the result (e.g., correct answers, total score).
-    - Provide feedback on each question (e.g., correct/incorrect).
-    """
-    return "hi"
 
 
-@app.route("/submit_quiz/<quiz_id>", methods=["POST"])
-def submit_quiz(quiz_id):
-    """
-    Handle quiz submission.
-    - Accept the user's answers via POST request.
-    - Validate the answers and calculate the score.
-    - Save the user's results in the database.
-    - Redirect to the results page or show a success message.
-    """
-    return "hi"
 
 
-@app.route("/logout")
-def log_out():
-    """
-    Log out the user.
-    - Clear the user session and log them out.
-    - Redirect to the login page or home page.
-    """
-    return "hi"
 
 
 if __name__ == "__main__":
