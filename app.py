@@ -1,8 +1,10 @@
-from flask import Flask
+from flask import Flask, flash, request, redirect, url_for, render_template, flash
+from werkzeug.security import generate_password_hash
+from models.user import User
 
 app = Flask(__name__)
 
-@app.route("/register")
+@app.route("/register", methods = ["GET", "POST"])
 def register():
     """
     Handle user registration.
@@ -11,10 +13,17 @@ def register():
     - Validate and save the user to the database.
     - Redirect to login page or show success message after successful registration.
     """
-    
-    return "hi"
+    if request.method == "POST":
+        username = request.form["username"]
+        password = generate_password_hash(request.form["password"])
+        email = request.form["email"]
+        User.add(User(username, password, email))
 
-@app.route("/login")
+        flash("Registration successful! Please log in.")
+        return redirect(url_for("log_in"))
+    return render_template("register.html")
+
+@app.route("/login", methods = ["GET", "POST"])
 def log_in():
     """
     Handle user login.
@@ -23,7 +32,9 @@ def log_in():
     - Create a user session on successful login.
     - Redirect to the user's profile or the main dashboard after login.
     """
-    return "hi"
+    if request.method == "POST":
+        return redirect(url_for("profile"))
+    return render_template("login.html")
 
 @app.route("/profile")
 def profile():

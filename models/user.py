@@ -1,4 +1,4 @@
-import hashlib
+from werkzeug.security import generate_password_hash, check_password_hash
 from .base import Base
 from .db import db
 from sqlalchemy import Column, Integer, String
@@ -26,9 +26,10 @@ class User(Base):
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Score = Column(Integer, default=0)
 
-    def __init__(self, Username: str, Password: str, Score: int = 0):
+    def __init__(self, Username: str, Password: str, email: str, Score: int = 0):
         self.Username = Username
         self.Password = self.hash_password(Password)
+        self.email = email
 
         self.Score = Score
 
@@ -36,14 +37,13 @@ class User(Base):
         """
         Hash the password for secure storage.
         """
-        return hashlib.sha256(Password.encode()).hexdigest()
-
-    def authenticate(self, Password: str):
+        return generate_password_hash(Password)
+    def authenticate(self, Password: str) -> bool:
         """
         Authenticate the user by comparing the given password's hash 
         with the stored hashed password.
         """
-        return self.Password == self.hash_password(Password)
+        return check_password_hash(self.Password, Password)
 
     def update_score(self, new_score: int):
         """
