@@ -6,14 +6,15 @@ def mock_users():
     from models.user import User
 
     try:
-        user = User("Ahmed Arafa", "303", 8888)
+        user = User("Ahmed Arafa", "303", "admin1@gmail.com", 8888)
         User.add(user)
-        user = User("Khaled Alshaer", "4444", 9999)
+        user = User("Khaled Alshaer", "4444", "admin2@gmail.com", 9999)
         User.add(user)
     except Exception as e:
         pass
     for i in range(1, 100):
-        user = User(f"User {i}", f"pass{randint(100,9999)}", randint(0, 1000))
+        user = User(f"User {i}", f"pass{randint(100,9999)}",
+                    f"{i}@gmail.com", randint(0, 1000))
         User.add(user)
 
 
