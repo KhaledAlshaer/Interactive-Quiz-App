@@ -2,6 +2,7 @@
 import traceback
 from sqlalchemy import Column, Integer, String
 from .question import Question
+
 from sqlalchemy.orm import relationship
 from .base import Base
 from .db import db
@@ -9,6 +10,7 @@ from .db import db
 
 class Quiz(Base):
     from .users_quizzes import UserQuiz
+    from .user import User
     """
      This class represents a quiz made up of multiple questions.
 
@@ -29,7 +31,7 @@ class Quiz(Base):
     questions = relationship(
         "Question", back_populates='quiz', cascade="all, delete-orphan")
     users = relationship("User",  secondary="users_quizzes",
-                         back_populates="quizzes")
+                         back_populates="quizzes", lazy="joined")
 
     def __init__(self, name: str, quiz_category: str, time_limit: int):
         """

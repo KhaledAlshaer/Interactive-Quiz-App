@@ -1,6 +1,7 @@
 import traceback
 from werkzeug.security import generate_password_hash, check_password_hash
 from .base import Base
+from .users_quizzes import UserQuiz
 from .db import db
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
@@ -36,8 +37,6 @@ class User(Base):
         self.Username = Username
         self.Password = self.hash_password(Password)
         self.email = email
-
-        self.Score = Score
 
     def hash_password(self, Password: str) -> str:
         """

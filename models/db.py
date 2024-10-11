@@ -27,4 +27,4 @@ class DB:
 
 
 db = DB()
-db.create_tables()
+DB.create_tables()
