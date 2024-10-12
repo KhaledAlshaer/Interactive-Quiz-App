@@ -16,7 +16,7 @@ def register():
     """
     if request.method == "POST":
         username = request.form["username"]
-        password = generate_password_hash(request.form["password"])
+        password = request.form["password"]
         email = request.form["email"]
         User.add(User(username, password, email))
 
@@ -35,7 +35,16 @@ def log_in():
     - Redirect to the user's profile or the main dashboard after login.
     """
     if request.method == "POST":
-        return redirect(url_for("profile"))
+        username = request.form["username"]
+        user = User.get_user(username)
+        password = user.hash_password(request.form["password"])
+
+        if user and user.authenticate(password):
+            flash("log in successful!")
+            return redirect(url_for("profile"))
+        else:
+            flash("Invalid username or password.")
+
     return render_template("login.html")
 
 
