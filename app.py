@@ -16,7 +16,7 @@ def register():
     """
     if request.method == "POST":
         username = request.form["username"]
-        password = request.form["password"]
+        password = generate_password_hash(request.form["password"])
         email = request.form["email"]
         User.add(User(username, password, email))
 
@@ -37,7 +37,7 @@ def log_in():
     if request.method == "POST":
         username = request.form["username"]
         user = User.get_user(username)
-        password = user.hash_password(request.form["password"])
+        password = request.form["password"]
 
         if user and user.authenticate(password):
             flash("log in successful!")
@@ -65,6 +65,12 @@ def profile():
     - Fetch and display user-specific information (username, quizzes taken, total score, etc.).
     - Allow users to update their personal details or view their quiz history.
     """
+    # username
+    # email
+    # id
+    # quizz
+    # score
+
     return "hi"
 
 
