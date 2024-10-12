@@ -38,7 +38,7 @@ def log_in():
     """
     if request.method == "POST":
         username = request.form["username"]
-        user = User.get_user(username)
+        user = User.get_user_by_username(username)
         password = request.form["password"]
 
         if user and user.authenticate(password):
