@@ -35,7 +35,16 @@ def log_in():
     - Redirect to the user's profile or the main dashboard after login.
     """
     if request.method == "POST":
-        return redirect(url_for("profile"))
+        username = request.form["username"]
+        user = User.get_user(username)
+        password = request.form["password"]
+
+        if user and user.authenticate(password):
+            flash("log in successful!")
+            return redirect(url_for("profile"))
+        else:
+            flash("Invalid username or password.")
+
     return render_template("login.html")
 
 
@@ -56,6 +65,12 @@ def profile():
     - Fetch and display user-specific information (username, quizzes taken, total score, etc.).
     - Allow users to update their personal details or view their quiz history.
     """
+    # username
+    # email
+    # id
+    # quizz
+    # score
+
     return "hi"
 
 
