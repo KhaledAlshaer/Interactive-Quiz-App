@@ -3,7 +3,7 @@ from random import randint
 
 
 def mock_users():
-    from models.user import User
+    from src.models.user import User
 
     try:
         user = User("Ahmed Arafa", "303", "admin1@gmail.com", 8888)
@@ -19,8 +19,8 @@ def mock_users():
 
 
 def mock_quizes():
-    from models.quiz import Quiz
-    from models.question import Question
+    from src.models.quiz import Quiz
+    from src.models.question import Question
     difficulties = ["Easy", "Medium", "Hard"]
     choices = ["A", "B", "C", "D"]
     for i in range(1, 10):
