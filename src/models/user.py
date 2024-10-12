@@ -6,6 +6,12 @@ from src.models import db
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
+from src import login_manager
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get_user_by_id(int(user_id))
 
 
 class User(Base, UserMixin):
@@ -81,6 +87,9 @@ class User(Base, UserMixin):
         """
         return f"User(username={self.Username}, ID={self.ID}, Score={self.Score})"
 
+    def get_id(self):
+        return self.ID
+
     @classmethod
     def add(cls, user: 'User'):
         """
@@ -114,11 +123,11 @@ class User(Base, UserMixin):
         return db.session.query(User).filter_by(email=email).first()
 
     @classmethod
-    def get_user_by_id(cls, id: str) -> 'User':
+    def get_user_by_id(cls, id: int) -> 'User':
         """
         Retrieve a user from the database by username.
         """
-        return db.session.query(User).filter_by(id=id).first()
+        return db.session.query(User).filter_by(ID=id).first()
 
     @classmethod
     def update(cls, user: 'User'):

@@ -3,7 +3,9 @@ from werkzeug.security import generate_password_hash
 
 from .models.user import User
 from .models.forms import RegistrationForm, LoginForm, newQuestionform, newQuizform, solveQuizForm
-from src import app
+from src import app, login_manager
+from flask_login import login_user, login_required, current_user, logout_user
+login_manager.login_view = "log_in"  # type: ignore
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -36,18 +38,20 @@ def log_in():
     - Create a user session on successful login.
     - Redirect to the user's profile or the main dashboard after login.
     """
-    if request.method == "POST":
-        username = request.form["username"]
+    if current_user.is_authenticated:
+        return redirect(url_for("profile"))
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
         user = User.get_user_by_username(username)
-        password = request.form["password"]
-
         if user and user.authenticate(password):
-            flash("log in successful!")
-            return redirect(url_for("profile"))
-        else:
-            flash("Invalid username or password.")
+            login_user(user)
+            next_page = request.args.get("next")
+            return redirect(url_for(next_page)) if next_page else redirect(url_for("profile"))
+        flash("Invalid username or password. Please try again.")
 
-    return render_template("login.html")
+    return render_template("login.html", form=form)
 
 
 @app.route("/logout")
@@ -57,7 +61,8 @@ def logout():
     - Clear the user session and log them out.
     - Redirect to the login page or home page.
     """
-    return "hi"
+    logout_user()
+    return redirect(url_for("log_in"))
 
 
 @app.route("/profile")
