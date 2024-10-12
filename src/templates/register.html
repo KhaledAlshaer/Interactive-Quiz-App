@@ -1,49 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register</title>
-</head>
+{% block content %}
+<h1>Register New Account</h1>
 
-<body>
-    <h1>Register</h1>
+<form action="" method="post">
+    <div>
+        {{ form.hidden_tag() }}
+        {{ form.username.label }} {{ form.username() }}
+        {% if form.username.errors %}
+        {% for error in form.username.errors %}
+        <h2 style="color: red">{{ error }}</h2>
+        {% endfor %}
+        {% endif %}
+    </div>
 
-    <form action="" method="post">
-        <div>
-            {{ form.hidden_tag() }}
-            {{ form.username.label }} {{ form.username() }}
-            {% if form.username.errors %}
-            {% for error in form.username.errors %}
-            <h1 style="color: red">{{ error }}</h1>
-            {% endfor %}
-            {% endif %}
-        </div>
+    <div>
+        {{ form.email.label }} {{ form.email() }}
+        {% if form.email.errors %}
+        {% for error in form.email.errors %}
+        <h2 style="color: red">{{ error }}</h2>
+        {% endfor %}
+        {% endif %}
+    </div>
 
-        <div>
-            {{ form.email.label }} {{ form.email() }}
-            {% if form.email.errors %}
-            {% for error in form.email.errors %}
-            <h1 style="color: red">{{ error }}</h1>
-            {% endfor %}
-            {% endif %}
-        </div>
+    <div>
+        {{ form.password.label }} {{ form.password() }}
+        {% if form.password.errors %}
+        {% for error in form.password.errors %}
+        <h2 style="color: red">{{ error }}</h2>
+        {% endfor %}
+        {% endif %}
+    </div>
 
-        <div>
-            {{ form.password.label }} {{ form.password() }}
-            {% if form.password.errors %}
-            {% for error in form.password.errors %}
-            <h1 style="color: red">{{ error }}</h1>
-            {% endfor %}
-            {% endif %}
-        </div>
-
-        <div>
-            {{ form.submit() }}
-        </div>
-    </form>
-</body>
-
-</html>
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+{% endblock %}
