@@ -3,9 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, ValidationError, FieldList, FormField
 from wtforms.validators import DataRequired, Email, Length
 
-from app import quiz
-from models import question
-from models.user import User
+from src.models.user import User
 
 
 class RegistrationForm(FlaskForm):
@@ -13,6 +11,8 @@ class RegistrationForm(FlaskForm):
                            DataRequired(), Length(min=4, max=20)])
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField(validators=[DataRequired()])
+
+    submit = SubmitField("Sign Up")
 
     def validate_username(self, username):
         user = User.get_user_by_username(username.data)
@@ -64,5 +64,3 @@ class solveQuizForm(FlaskForm):
     next_question = SubmitField("Next Question")
     previous_question = SubmitField("Previous Question")
     submit_quiz = SubmitField("Submit Quiz")
-
-

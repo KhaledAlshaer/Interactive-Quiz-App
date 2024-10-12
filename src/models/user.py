@@ -1,8 +1,8 @@
 import traceback
 from werkzeug.security import generate_password_hash, check_password_hash
 from .base import Base
-from .users_quizzes import UserQuiz
-from .db import db
+from src.models import db
+
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
@@ -10,6 +10,7 @@ from flask_login import UserMixin
 
 class User(Base, UserMixin):
     from .users_quizzes import UserQuiz
+
     """
     This class represents a user in the Interactive Quiz Application.
 
@@ -32,7 +33,7 @@ class User(Base, UserMixin):
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Score = Column(Integer, default=0)
     quizzes = relationship(
-        "Quiz",  secondary="users_quizzes", back_populates="users")
+        "Quiz",  secondary="users_quizzes", back_populates="users", lazy='dynamic')
 
     def __init__(self, Username: str, Password: str, email: str, Score: int = 0):
         self.Username = Username

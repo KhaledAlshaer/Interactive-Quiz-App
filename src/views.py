@@ -1,8 +1,9 @@
-from flask import Flask, flash, jsonify, request, redirect, url_for, render_template, flash
+from flask import flash, jsonify, request, redirect, url_for, render_template, flash
 from werkzeug.security import generate_password_hash
-from models.user import User
 
-app = Flask(__name__)
+from .models.user import User
+from .models.forms import RegistrationForm, LoginForm, newQuestionform, newQuizform, solveQuizForm
+from src import app
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -14,15 +15,16 @@ def register():
     - Validate and save the user to the database.
     - Redirect to login page or show success message after successful registration.
     """
-    if request.method == "POST":
-        username = request.form["username"]
-        password = generate_password_hash(request.form["password"])
-        email = request.form["email"]
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = generate_password_hash(form.password.data)
+        email = form.email.data
         User.add(User(username, password, email))
 
         flash("Registration successful! Please log in.")
         return redirect(url_for("log_in"))
-    return render_template("register.html")
+    return render_template("register.html", form=form)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -99,13 +101,3 @@ def quiz(quiz_id):
     """
     quiz = Quiz.get_quiz_by_id(quiz_id)
     return jsonify(quiz.to_dict()), 200
-
-
-
-
-
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

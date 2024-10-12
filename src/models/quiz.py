@@ -5,7 +5,8 @@ from .question import Question
 
 from sqlalchemy.orm import relationship
 from .base import Base
-from .db import db
+from src.models import db
+
 
 
 class Quiz(Base):
