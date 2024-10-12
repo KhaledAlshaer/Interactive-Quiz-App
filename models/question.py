@@ -28,11 +28,11 @@ class Question(Base):
     choices = Column(JSON, nullable=False)
     correct_answer = Column(String(255), nullable=False)
     score = Column(Integer, nullable=False)
-    category = Column(String(255), nullable=False)
+    
     difficulty = Column(String(255), nullable=False)
 
     def __init__(self, text: str, choices: list,
-                 correct_answer: str, score: int, category: str, difficulty: str, quiz):
+                 correct_answer: str, score: int, difficulty: str, quiz):
         """
         Initialize a new Question object.
         """
@@ -43,7 +43,7 @@ class Question(Base):
         self.choices = choices
         self.correct_answer = correct_answer
         self.score = score
-        self.category = category
+        
         self.difficulty = difficulty
         self.quiz = quiz
         self.quiz_id = quiz.quiz_id

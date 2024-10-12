@@ -5,9 +5,10 @@ from .users_quizzes import UserQuiz
 from .db import db
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
+from flask_login import UserMixin
 
 
-class User(Base):
+class User(Base, UserMixin):
     from .users_quizzes import UserQuiz
     """
     This class represents a user in the Interactive Quiz Application.
@@ -98,11 +99,25 @@ class User(Base):
             print(tb)
 
     @classmethod
-    def get_user(cls, username: str) -> 'User':
+    def get_user_by_username(cls, username: str) -> 'User':
         """
         Retrieve a user from the database by username.
         """
         return db.session.query(User).filter_by(Username=username).first()
+
+    @classmethod
+    def get_user_by_email(cls, email: str) -> 'User':
+        """
+        Retrieve a user from the database by username.
+        """
+        return db.session.query(User).filter_by(email=email).first()
+
+    @classmethod
+    def get_user_by_id(cls, id: str) -> 'User':
+        """
+        Retrieve a user from the database by username.
+        """
+        return db.session.query(User).filter_by(id=id).first()
 
     @classmethod
     def update(cls, user: 'User'):

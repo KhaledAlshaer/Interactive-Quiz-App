@@ -51,7 +51,7 @@ class Quiz(Base):
         return len(self.questions)
 
     def add_question(self, text: str, choices: list,
-                     correct_answer: str, score: int, category: str, difficulty: str):
+                     correct_answer: str, score: int, difficulty: str):
         """
         Add a question to the quiz.
 
@@ -62,7 +62,7 @@ class Quiz(Base):
         - TypeError: If the argument is not an instance of the Question class.
         """
         Question(text, choices, correct_answer,
-                 score, category, difficulty, self)
+                 score, difficulty, self)
     # def add_questions(self, questions: list):
     #     """
     #     Add a question to the quiz.
