@@ -8,7 +8,6 @@ from .base import Base
 from src.models import db
 
 
-
 class Quiz(Base):
     from .users_quizzes import UserQuiz
     from .user import User
@@ -62,8 +61,8 @@ class Quiz(Base):
         Raises:
         - TypeError: If the argument is not an instance of the Question class.
         """
-        Question(text, choices, correct_answer,
-                 score, difficulty, self)
+        db.session.add(Question(text, choices, correct_answer,
+                                score, difficulty, self))
     # def add_questions(self, questions: list):
     #     """
     #     Add a question to the quiz.
@@ -142,7 +141,7 @@ class Quiz(Base):
         """
         Retrieve a quiz from the database by name.
         """
-        return db.session.query(Quiz).filter_by(name=name).first()
+        return db.session.query(Quiz).filter_by(name=name).first()  # type: ignore
 
     @classmethod
     def get_quiz_by_id(cls, id: int) -> 'Quiz':

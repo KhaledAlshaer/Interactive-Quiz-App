@@ -10,8 +10,12 @@
 
 <body>
 
-
     <main>
+        <h1>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+        </h1>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <div class="flashed-messages">

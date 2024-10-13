@@ -36,19 +36,21 @@ class UserQuiz(Base):
             raise ValueError(
                 "The score must be between 0 and the total score of the quiz.")
 
-        userquiz = UserQuiz(user_id=user.ID, quiz_id=quiz.quiz_id, score=score)
+    @classmethod
+    def add_by_ids(cls, user_id, quiz_id, score: int):
+        """
+        Add a new user-quiz association to the database using user and quiz IDs.
+        """
+        from src.models.user import User
+        user_quiz = UserQuiz(user_id=user_id, quiz_id=quiz_id, score=score)
         try:
-            is_user_quiz_exist = db.session.query(UserQuiz).filter(
-                UserQuiz.user_id == user.ID, UserQuiz.quiz_id == quiz.quiz_id).first()
-            if is_user_quiz_exist:
-                db.session.merge(is_user_quiz_exist)
-            else:
-                db.session.add(userquiz)
+            db.session.add(user_quiz)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
             tb = traceback.format_exc()
             print(tb)
         finally:
+            user = User.get_user_by_id(user_id)
             user.update_score()
             User.update(user)

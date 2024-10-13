@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Profile {{ user.Username }}</h1>
+<h2>Score: {{ user.Score }}</h2>
+
+{% if user.is_admin %}
+<a href="{{ url_for('quiz_add') }}">Add New Quiz</a>
+{% endif %}
+
+{% if user.is_admin %}
+{% for quiz in quiz_get_all %}
+<h3>Quiz Name: {{ quiz.name }}</h3>
+<p>Quiz Category: {{ quiz.quiz_category }}</p>
+<p>Quiz Score: {{ quiz.total_score }}</p>
+<p>Quiz Time: {{ quiz.time_limit }}</p>
+<p>Questions Number: {{ quiz.number_of_questions }}</p>
+<a href="{{ url_for('quiz_edit', quiz_id=quiz.quiz_id) }}">Edit Quiz</a> |
+<a href="{{ url_for('quiz_delete', quiz_id=quiz.quiz_id) }}">Delete Quiz</a>
+{% endfor %}
+
+{%else%}
+{% for quiz in user.quizzes %}
+<h3>Quiz Name: {{ quiz.name }}</h3>
+<p>Quiz Category: {{ quiz.quiz_category }}</p>
+<p>Quiz Score: {{ quiz.total_score }}</p>
+<p>Quiz Time: {{ quiz.time_limit }}</p>
+<p>Questions Number: {{ quiz.number_of_questions }}</p>
+
+{%endfor %}
+{% endif %}
+
+
+
+{% endblock %}

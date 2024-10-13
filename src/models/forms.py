@@ -1,9 +1,11 @@
 
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, ValidationError, FieldList, FormField
+from calendar import c
+from flask_wtf import FlaskForm, CSRFProtect
+from wtforms import StringField, PasswordField, SubmitField, ValidationError, FieldList, FormField, IntegerField
 from wtforms.validators import DataRequired, Email, Length
-
+from src import app
 from src.models.user import User
+csrf = CSRFProtect(app)
 
 
 class RegistrationForm(FlaskForm):
@@ -40,7 +42,7 @@ class newQuestionform(FlaskForm):
     option3 = StringField("Option 3", validators=[DataRequired()])
     option4 = StringField("Option 4", validators=[DataRequired()])
     answer = StringField("Answer", validators=[DataRequired()])
-    score = StringField("Score", validators=[DataRequired()])
+    score = IntegerField("Score", validators=[DataRequired()])
     difficulty = StringField("Difficulty", validators=[DataRequired()])
 
     def validate_answer(self, answer):
@@ -49,13 +51,30 @@ class newQuestionform(FlaskForm):
 
 
 class newQuizform(FlaskForm):
+    from src.models.quiz import Quiz
     quiz_name = StringField("Quiz Name", validators=[DataRequired()])
     category = StringField("Category", validators=[DataRequired()])
-    time_limit = StringField("Time Limit", validators=[DataRequired()])
+    time_limit = IntegerField("Time Limit", validators=[DataRequired()])
     questions = FieldList(FormField(newQuestionform), min_entries=1)
 
     submit = SubmitField("Create Quiz")
     add_question = SubmitField("Add Question")
+
+    def fill(self, quiz: Quiz):
+        self.quiz_name.data = quiz.name  # type: ignore
+        self.category.data = quiz.quiz_category  # type: ignore
+        self.time_limit.data = quiz.time_limit  # type: ignore
+        while len(self.questions) < len(quiz.questions):
+            self.questions.append_entry()
+        for i, question in enumerate(quiz.questions):
+            self.questions[i].question.data = question.text
+            self.questions[i].option1.data = question.choices[0]
+            self.questions[i].option2.data = question.choices[1]
+            self.questions[i].option3.data = question.choices[2]
+            self.questions[i].option4.data = question.choices[3]
+            self.questions[i].answer.data = question.correct_answer
+            self.questions[i].score.data = question.score
+            self.questions[i].difficulty.data = question.difficulty
 
 
 class solveQuizForm(FlaskForm):

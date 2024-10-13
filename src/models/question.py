@@ -22,13 +22,12 @@ class Question(Base):
     question_id = Column(Integer, primary_key=True,
                          autoincrement=True)
     quiz_id = Column(Integer, ForeignKey('quizzes.quiz_id'))
-    quiz = relationship('Quiz', back_populates='questions',
-                        )
     text = Column(String(255), nullable=False)
     choices = Column(JSON, nullable=False)
     correct_answer = Column(String(255), nullable=False)
     score = Column(Integer, nullable=False)
-    
+
+    quiz = relationship('Quiz', back_populates='questions')
     difficulty = Column(String(255), nullable=False)
 
     def __init__(self, text: str, choices: list,
@@ -43,7 +42,7 @@ class Question(Base):
         self.choices = choices
         self.correct_answer = correct_answer
         self.score = score
-        
+
         self.difficulty = difficulty
         self.quiz = quiz
         self.quiz_id = quiz.quiz_id
@@ -63,7 +62,7 @@ class Question(Base):
             "choices": self.choices,
             "correct_answer": self.correct_answer,
             "score": self.score,
-            "category": self.category,
+
             "difficulty": self.difficulty
         }
 

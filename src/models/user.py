@@ -1,9 +1,11 @@
+from operator import is_
 import traceback
+from tomlkit import boolean
 from werkzeug.security import generate_password_hash, check_password_hash
 from .base import Base
 from src.models import db
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from src import login_manager
@@ -38,13 +40,15 @@ class User(Base, UserMixin):
     email = Column(String(255), unique=True, nullable=False)
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Score = Column(Integer, default=0)
+    is_admin = Column(Boolean, default=False)
     quizzes = relationship(
         "Quiz",  secondary="users_quizzes", back_populates="users", lazy='dynamic')
 
-    def __init__(self, Username: str, Password: str, email: str, Score: int = 0):
+    def __init__(self, Username: str, Password: str, email: str, Score: int = 0, is_admin: bool = False):
         self.Username = Username
         self.Password = self.hash_password(Password)
         self.email = email
+        self.is_admin = is_admin
 
     def hash_password(self, Password: str) -> str:
         """
