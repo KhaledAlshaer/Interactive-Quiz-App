@@ -1,12 +1,16 @@
-from math import e
+
+import traceback
 from sqlalchemy import Column, Integer, String
 from .question import Question
+
 from sqlalchemy.orm import relationship
 from .base import Base
-from .db import db
+from src.models import db
 
 
 class Quiz(Base):
+    from src.models.users_quizzes import UserQuiz
+    from src.models.user import User
     """
      This class represents a quiz made up of multiple questions.
 
@@ -21,10 +25,13 @@ class Quiz(Base):
     __tablename__ = 'quizzes'
     quiz_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), unique=True, nullable=False)
-    questions = relationship("Question", back_populates='quiz')
     total_score = Column(Integer, nullable=False)
     quiz_category = Column(String(255), nullable=False)
     time_limit = Column(Integer, nullable=False)
+    questions = relationship(
+        "Question", back_populates='quiz', cascade="all, delete-orphan")
+    users = relationship("User",  secondary="users_quizzes",
+                         back_populates="quizzes", lazy="joined")
 
     def __init__(self, name: str, quiz_category: str, time_limit: int):
         """
@@ -43,7 +50,8 @@ class Quiz(Base):
         """
         return len(self.questions)
 
-    def add_question(self, question):
+    def add_question(self, text: str, choices: list,
+                     correct_answer: str, score: int, difficulty: str):
         """
         Add a question to the quiz.
 
@@ -53,39 +61,30 @@ class Quiz(Base):
         Raises:
         - TypeError: If the argument is not an instance of the Question class.
         """
-        if not isinstance(question, Question):
-            raise TypeError(
-                "The argument must be an instance of the Question class.")
+        db.session.add(Question(text, choices, correct_answer,
+                                score, difficulty, self))
+    # def add_questions(self, questions: list):
+    #     """
+    #     Add a question to the quiz.
 
-        self.questions.append(question)
+    #     Args:
+    #     - question (Question): A Question object to add to the quiz.
 
-    def add_questions(self, questions: list):
-        """
-        Add a question to the quiz.
-
-        Args:
-        - question (Question): A Question object to add to the quiz.
-
-        Raises:
-        - TypeError: If the argument is not an instance of the Question class.
-        """
-        for question in questions:
-            if not isinstance(question, Question):
-                raise TypeError(
-                    "The argument must be an instance of the Question class.")
-            self.add_question(question)
+    #     Raises:
+    #     - TypeError: If the argument is not an instance of the Question class.
+    #     """
+    #     for question in questions:
+    #         if not isinstance(question, Question):
+    #             raise TypeError(
+    #                 "The argument must be an instance of the Question class.")
+    #         self.add_question(question)
 
     def calculate_total_score(self):
         """
-        Calculate the total possible score for the quiz by summing 
+        Calculate the total possible score for the quiz by summing
         the scores of all the questions.
         """
-        self.total_score = 0
-        print("-----------------")
-        for question in self.questions:
-            print(question, end="\n\t")
-            self.total_score += question.score
-        print("-----------------")
+        self.total_score = sum([question.score for question in self.questions])
 
     def get_question_by_id(self, question_id: int) -> Question:
         """
@@ -108,8 +107,18 @@ class Quiz(Base):
     def __str__(self):
         return f"Quiz: {self.name}, Category: {self.quiz_category}, Number of Questions: {self.number_of_questions}, Total Score: {self.total_score}, Time Limit: {self.time_limit} minutes."
 
-    @staticmethod
-    def add(quiz: 'Quiz'):
+    def to_dict(self):
+        return {
+            "quiz_id": self.quiz_id,
+            "name": self.name,
+            "questions": [question.to_dict() for question in self.questions],
+            "total_score": self.total_score,
+            "quiz_category": self.quiz_category,
+            "time_limit": self.time_limit
+        }
+
+    @classmethod
+    def add(cls, quiz: 'Quiz'):
         """
         Add a quiz to the database.
         """
@@ -124,24 +133,32 @@ class Quiz(Base):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
 
-    @staticmethod
-    def get_quiz(name: str) -> 'Quiz':
+    @classmethod
+    def get_quiz_by_name(cls, name: str) -> 'Quiz':
         """
         Retrieve a quiz from the database by name.
         """
-        return db.session.query(Quiz).filter_by(name=name).first()
+        return db.session.query(Quiz).filter_by(name=name).first()  # type: ignore
 
-    @staticmethod
-    def get_all_quizzes() -> list:
+    @classmethod
+    def get_quiz_by_id(cls, id: int) -> 'Quiz':
+        """
+        Retrieve a quiz from the database by name.
+        """
+        return db.session.query(Quiz).filter_by(quiz_id=id).first()
+
+    @classmethod
+    def get_all_quizzes(cls) -> list:
         """
         Retrieve all quizzes from the database.
         """
         return db.session.query(Quiz).all()
 
-    @staticmethod
-    def update(quiz: 'Quiz'):
+    @classmethod
+    def update(cls, quiz: 'Quiz'):
         """
         Update a quiz in the database.
         """
@@ -163,10 +180,11 @@ class Quiz(Base):
 
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
 
-    @staticmethod
-    def delete(quiz: 'Quiz'):
+    @classmethod
+    def delete(cls, quiz: 'Quiz'):
         """
         Delete a quiz from the database.
         """
@@ -179,8 +197,8 @@ class Quiz(Base):
             is_quiz = db.session.query(Quiz).filter_by(
                 quiz_id=quiz.quiz_id).first()
             if is_quiz:
-                for question in quiz.questions:
-                    db.session.delete(question)
+                # for question in quiz.questions:
+                #     db.session.delete(question)
                 db.session.delete(quiz)
                 db.session.commit()
             else:
@@ -188,4 +206,5 @@ class Quiz(Base):
 
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit Quiz: </h1>
+
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.quiz_name.label }} {{ form.quiz_name() }}
+    </div>
+    <div>
+        {{ form.category.label }} {{ form.category() }}
+    </div>
+    <div>
+        {{ form.time_limit.label }} {{ form.time_limit() }}
+    </div>
+
+    <h2>Questions:</h2>
+    {% for question in form.questions %}
+    <div >
+        <h3>Question {{ loop.index }}:</h3>
+        {{ question.question.label }} {{ question.question() }}
+<br>
+        {{ question.option1.label }} {{ question.option1() }}
+        <br>
+        {{ question.option2.label }} {{ question.option2() }}
+        <br>
+        {{ question.option3.label }} {{ question.option3() }}
+        <br>
+        {{ question.option4.label }} {{ question.option4() }}
+        <br>
+        {{ question.answer.label }} {{ question.answer() }}
+        {% for error in question.answer.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        <br>
+        {{ question.score.label }} {{ question.score() }}
+        <br>
+        {{ question.difficulty.label }} {{ question.difficulty() }}
+        <br>
+    </div>
+    
+    <hr>
+    {% endfor %}
+
+    <div>
+        {{ form.add_question() }}
+    </div>
+<br>
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+{% endblock %}

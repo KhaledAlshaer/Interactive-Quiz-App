@@ -1,10 +1,24 @@
-import hashlib
+from operator import is_
+import traceback
+from tomlkit import boolean
+from werkzeug.security import generate_password_hash, check_password_hash
 from .base import Base
-from .db import db
-from sqlalchemy import Column, Integer, String
+from src.models import db
+
+from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy.orm import relationship
+from flask_login import UserMixin
+from src import login_manager, bcrypt
 
 
-class User(Base):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get_user_by_id(int(user_id))
+
+
+class User(Base, UserMixin):
+    from .users_quizzes import UserQuiz
+
     """
     This class represents a user in the Interactive Quiz Application.
 
@@ -23,33 +37,38 @@ class User(Base):
     __tablename__ = 'users'
     Username = Column(String(255), unique=True, nullable=False)
     Password = Column(String(255), nullable=False)
+    email = Column(String(255), unique=True, nullable=False)
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Score = Column(Integer, default=0)
+    is_admin = Column(Boolean, default=False)
+    quizzes = relationship(
+        "Quiz",  secondary="users_quizzes", back_populates="users", lazy='dynamic')
 
-    def __init__(self, Username: str, Password: str, Score: int = 0):
+    def __init__(self, Username: str, Password: str, email: str, Score: int = 0, is_admin: bool = False):
         self.Username = Username
         self.Password = self.hash_password(Password)
-
-        self.Score = Score
+        self.email = email
+        self.is_admin = is_admin
 
     def hash_password(self, Password: str) -> str:
         """
         Hash the password for secure storage.
         """
-        return hashlib.sha256(Password.encode()).hexdigest()
+        return bcrypt.generate_password_hash(Password).decode('utf-8')
 
-    def authenticate(self, Password: str):
+    def is_password(self, Password: str) -> bool:
         """
         Authenticate the user by comparing the given password's hash 
         with the stored hashed password.
         """
-        return self.Password == self.hash_password(Password)
 
-    def update_score(self, new_score: int):
+        return bcrypt.check_password_hash(self.Password, Password)
+
+    def update_score(self):
         """
         Update the user's total score.
         """
-        self.Score += new_score
+        self.Score = sum([quiz.total_score for quiz in self.quizzes])
 
     def reset_password(self, new_password: str):
         """
@@ -73,8 +92,11 @@ class User(Base):
         """
         return f"User(username={self.Username}, ID={self.ID}, Score={self.Score})"
 
-    @staticmethod
-    def add(user: 'User'):
+    def get_id(self):
+        return self.ID
+
+    @classmethod
+    def add(cls, user: 'User'):
         """
         Add a user to the database.
         """
@@ -88,17 +110,32 @@ class User(Base):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
 
-    @staticmethod
-    def get_user(username: str) -> 'User':
+    @classmethod
+    def get_user_by_username(cls, username: str) -> 'User':
         """
         Retrieve a user from the database by username.
         """
         return db.session.query(User).filter_by(Username=username).first()
 
-    @staticmethod
-    def update(user: 'User'):
+    @classmethod
+    def get_user_by_email(cls, email: str) -> 'User':
+        """
+        Retrieve a user from the database by username.
+        """
+        return db.session.query(User).filter_by(email=email).first()
+
+    @classmethod
+    def get_user_by_id(cls, id: int) -> 'User':
+        """
+        Retrieve a user from the database by username.
+        """
+        return db.session.query(User).filter_by(ID=id).first()
+
+    @classmethod
+    def update(cls, user: 'User'):
         """
         Update a user in the database.
         """
@@ -110,6 +147,7 @@ class User(Base):
         try:
             is_user = db.session.query(User).filter_by(ID=user.ID).first()
             if is_user:
+                # user.update_score()
                 db.session.merge(user)
                 db.session.commit()
             else:
@@ -117,10 +155,11 @@ class User(Base):
 
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
 
-    @staticmethod
-    def delete(user: 'User'):
+    @classmethod
+    def delete(cls, user: 'User'):
         """
         Delete a user from the database.
         """
@@ -139,4 +178,5 @@ class User(Base):
 
         except Exception as e:
             db.session.rollback()
-            print(e)
+            tb = traceback.format_exc()
+            print(tb)
