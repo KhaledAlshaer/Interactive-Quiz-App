@@ -9,8 +9,8 @@ from src.models import db
 
 
 class Quiz(Base):
-    from .users_quizzes import UserQuiz
-    from .user import User
+    from src.models.users_quizzes import UserQuiz
+    from src.models.user import User
     """
      This class represents a quiz made up of multiple questions.
 

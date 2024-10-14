@@ -24,8 +24,8 @@ class UserQuiz(Base):
         """
         Add a new user-quiz association to the database.
         """
-        from models.user import User
-        from models.quiz import Quiz
+        from src.models.user import User
+        from src.models.quiz import Quiz
         if not isinstance(user, User):
             raise TypeError(
                 "The user argument must be an instance of the User class.")
@@ -35,6 +35,7 @@ class UserQuiz(Base):
         if score < 0 or score > quiz.total_score:  # type: ignore
             raise ValueError(
                 "The score must be between 0 and the total score of the quiz.")
+        cls.add_by_ids(user.ID, quiz.quiz_id, score)
 
     @classmethod
     def add_by_ids(cls, user_id, quiz_id, score: int):

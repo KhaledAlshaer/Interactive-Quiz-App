@@ -8,7 +8,7 @@ from src.models import db
 from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
-from src import login_manager
+from src import login_manager, bcrypt
 
 
 @login_manager.user_loader
@@ -54,14 +54,15 @@ class User(Base, UserMixin):
         """
         Hash the password for secure storage.
         """
-        return generate_password_hash(Password)
+        return bcrypt.generate_password_hash(Password).decode('utf-8')
 
-    def authenticate(self, Password: str) -> bool:
+    def is_password(self, Password: str) -> bool:
         """
         Authenticate the user by comparing the given password's hash 
         with the stored hashed password.
         """
-        return check_password_hash(self.Password, Password)  # type: ignore
+
+        return bcrypt.check_password_hash(self.Password, Password)
 
     def update_score(self):
         """
