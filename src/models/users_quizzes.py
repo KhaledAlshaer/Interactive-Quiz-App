@@ -1,7 +1,7 @@
 import traceback
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from src.models import db
+from src.models import db, quiz
 
 
 from .base import Base
@@ -55,3 +55,30 @@ class UserQuiz(Base):
             user = User.get_user_by_id(user_id)
             user.update_score()
             User.update(user)
+
+
+class UserQuestion(Base):
+
+    __tablename__ = 'users_questions'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.ID'))
+    question_id = Column(Integer, ForeignKey('questions.question_id'))
+    quiz_id = Column(Integer, ForeignKey('quizzes.quiz_id'))
+    is_pass = Column(Boolean, nullable=False)
+
+    @classmethod
+    def add(cls, user_id, quiz_id, question_id, is_pass: bool):
+        user_question = UserQuestion(
+            user_id=user_id, quiz_id=quiz_id, question_id=question_id, is_pass=is_pass)
+        try:
+            db.session.add(user_question)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            tb = traceback.format_exc()
+            print(tb)
+
+    @classmethod
+    def get_is_pass(cls, user_id, quiz_id, question_id):
+        db.session.query(UserQuestion).filter_by(
+            user_id=user_id, quiz_id=quiz_id, question_id=question_id).first()
