@@ -1,6 +1,4 @@
-from operator import is_
 import traceback
-import bcrypt
 from tomlkit import boolean
 from werkzeug.security import generate_password_hash, check_password_hash
 from .base import Base
@@ -9,8 +7,7 @@ from src.models import db
 from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
-from src import login_manager
-from bcrypt import hashpw, checkpw 
+from src import login_manager, bcrypt
 
 
 @login_manager.user_loader
@@ -56,14 +53,15 @@ class User(Base, UserMixin):
         """
         Hash the password for secure storage.
         """
-        hashed_password = bcrypt.hashpw(Password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        return hashed_password
+        return bcrypt.generate_password_hash(Password).decode('utf-8')
 
     def is_password(self, Password: str) -> bool:
         """
-        Authenticate the user by comparing the given password with the stored hashed password.
+        Authenticate the user by comparing the given password's hash 
+        with the stored hashed password.
         """
-        return bcrypt.checkpw(Password.encode('utf-8'), self.Password.encode('utf-8'))
+
+        return bcrypt.check_password_hash(self.Password, Password)
 
     def update_score(self):
         """
