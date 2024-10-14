@@ -219,7 +219,11 @@ def quiz_result(quiz_id):
     - Allow users to view their quiz history and performance.
     """
     quiz = Quiz.get_quiz_by_id(quiz_id)
+    questions = []
     for question in quiz.questions:
-        question.user_answer = UserQuestion.get_is_pass(
+        question_dict = {}
+        question_dict = question.to_dict()
+        question_dict["user_answer"] = UserQuestion.get_is_pass(
             current_user.ID, quiz_id, question.question_id)
-    return render_template("quiz_result.html", user=current_user, quiz=quiz, enumerate=enumerate)
+        questions.append(question_dict)
+    return render_template("quiz_result.html", user=current_user, quiz=quiz, enumerate=enumerate, questions=questions)
