@@ -11,7 +11,7 @@ csrf = CSRFProtect(app)
 
 class RegistrationForm(FlaskForm):
     username = StringField("Username", validators=[
-                           DataRequired(), Length(min=4, max=20)])
+                           DataRequired(), Length(min=2, max=20)])
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField(validators=[DataRequired()])
     confirm_password = PasswordField(validators=[DataRequired(), EqualTo('password')])
