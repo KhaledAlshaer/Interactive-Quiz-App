@@ -226,4 +226,5 @@ def quiz_result(quiz_id):
         question_dict["user_answer"] = UserQuestion.get_is_pass(
             current_user.ID, quiz_id, question.question_id)
         questions.append(question_dict)
+    print(questions)
     return render_template("quiz_result.html", user=current_user, quiz=quiz, enumerate=enumerate, questions=questions)

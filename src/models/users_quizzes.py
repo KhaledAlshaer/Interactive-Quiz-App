@@ -1,4 +1,5 @@
 from operator import is_
+import re
 import traceback
 from sqlalchemy import Column, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
@@ -86,7 +87,6 @@ class UserQuestion(Base):
 
     @classmethod
     def get_is_pass(cls, user_id, quiz_id, question_id):
-        db.session.query(UserQuestion).filter_by(
+        result = db.session.query(UserQuestion).filter_by(
             user_id=user_id, quiz_id=quiz_id, question_id=question_id).first()
-
-
+        return result.is_pass # type: ignore
