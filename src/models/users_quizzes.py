@@ -1,7 +1,8 @@
+from operator import is_
 import traceback
 from sqlalchemy import Column, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from src.models import db, quiz
+from src.models import db, question, quiz
 
 
 from .base import Base
@@ -45,8 +46,13 @@ class UserQuiz(Base):
         from src.models.user import User
         user_quiz = UserQuiz(user_id=user_id, quiz_id=quiz_id, score=score)
         try:
-            db.session.add(user_quiz)
-            db.session.commit()
+            is_user_quiz = db.session.query(UserQuiz).filter_by(
+                user_id=user_id, quiz_id=quiz_id)
+            if is_user_quiz:
+                db.session.merge(user_quiz)
+            else:
+                db.session.add(user_quiz)
+                db.session.commit()
         except Exception as e:
             db.session.rollback()
             tb = traceback.format_exc()
@@ -82,3 +88,5 @@ class UserQuestion(Base):
     def get_is_pass(cls, user_id, quiz_id, question_id):
         db.session.query(UserQuestion).filter_by(
             user_id=user_id, quiz_id=quiz_id, question_id=question_id).first()
+
+
