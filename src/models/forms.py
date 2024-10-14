@@ -2,7 +2,7 @@
 from calendar import c
 from flask_wtf import FlaskForm, CSRFProtect
 from wtforms import StringField, PasswordField, SubmitField, ValidationError, FieldList, FormField, IntegerField, SelectField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms.validators import DataRequired, Email, Length, EqualTo
 from src import app
 from src.models.quiz import Quiz
 from src.models.user import User
@@ -14,6 +14,7 @@ class RegistrationForm(FlaskForm):
                            DataRequired(), Length(min=4, max=20)])
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField(validators=[DataRequired()])
+    confirm_password = PasswordField(validators=[DataRequired(), EqualTo('password')])
 
     submit = SubmitField("Sign Up")
 
