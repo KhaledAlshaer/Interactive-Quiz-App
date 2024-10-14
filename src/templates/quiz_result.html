@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1> Result of : {{ quiz_name }}</h1>
+
+
+
+{% for  question in questions %}
+{% if question.get('user_answer') %}
+<div style="background-color: green;">
+    <h3>Question: {{ question.get('text') }}</h3>
+    {% for i,choice in enumerate(question.get('choices')) %}
+    
+    <p>Option {{i}}: {{ choice }}</p>
+    {% endfor %}
+    <p>Score: {{question.get('score')}}</p>
+    <p>Difficulty: {{question.get('difficulty')}}</p>
+    </div>
+{% else %}
+    <div style="background-color: red;">
+    <h3>Question: {{ question.get('text') }}</h3>
+    {% for i,choice in enumerate(question.get('choices')) %}
+    
+    <p>Option {{i}}: {{ choice }}</p>
+    {% endfor %}
+    <p>Score: {{question.get('score')}}</p>
+    <p>Difficulty: {{question.get('difficulty')}}</p>
+    <p>Correct Answer: {{ question.get('correct_answer') }}</p>
+
+    </div>
+{% endif %}
+    
+
+{% endfor %}
+
+{% endblock %}

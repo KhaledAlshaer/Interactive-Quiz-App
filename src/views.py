@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash
 
 from src.models import question, quiz
 from src.models.quiz import Quiz
-from src.models.users_quizzes import UserQuiz
+from src.models.users_quizzes import UserQuiz, UserQuestion
 
 from src.models.user import User
 from src.models.forms import RegistrationForm, LoginForm, newQuizform, solveQuizForm
@@ -179,15 +179,52 @@ def quizzes():
 @app.route("/quiz/solve/<int:quiz_id>", methods=["GET", "POST"])
 @login_required
 def quiz_solve(quiz_id):
+    """
+Handle the quiz solving process for a given quiz ID.
+
+This view function handles both GET and POST requests for solving a quiz.
+It retrieves the quiz by its ID, populates the form with the quiz data,
+and processes the form submission to calculate the user's score.
+
+Args:
+    quiz_id (int): The ID of the quiz to be solved.
+
+Returns:
+    Response: Renders the quiz solving template on GET request.
+              Redirects to the profile page with a flash message on successful form submission.
+"""
     form = solveQuizForm()
     quiz = Quiz.get_quiz_by_id(quiz_id)
     form.fill(quiz)
     if form.validate_on_submit():
         score = 0
         for i, question in enumerate(quiz.questions):
+            UserQuestion.add(current_user.ID, quiz.quiz_id,
+                             question.question_id, question.is_correct(
+                                 form.answers[i].data))
             if question.is_correct(form.answers[i].data):
                 score += question.score
         flash(f"Your score is {score}")
         UserQuiz.add(current_user, quiz, score)
         return redirect(url_for("profile"))
     return render_template("quiz_solve.html", form=form, questions=quiz.questions, quiz_name=quiz.name, zipped=zip(form.answers, quiz.questions), enumerate=enumerate)
+
+
+@app.route("/quiz/result/<int:quiz_id>", methods=["GET"])
+@login_required
+def quiz_result(quiz_id):
+    """
+    Display the user's quiz results.
+    - Fetch and display the user's quiz results (quizzes taken, scores, etc.).
+    - Allow users to view their quiz history and performance.
+    """
+    quiz = Quiz.get_quiz_by_id(quiz_id)
+    questions = []
+    for question in quiz.questions:
+        question_dict = {}
+        question_dict = question.to_dict()
+        question_dict["user_answer"] = UserQuestion.get_is_pass(
+            current_user.ID, quiz_id, question.question_id)
+        questions.append(question_dict)
+    print(questions)
+    return render_template("quiz_result.html", user=current_user, quiz=quiz, enumerate=enumerate, questions=questions)

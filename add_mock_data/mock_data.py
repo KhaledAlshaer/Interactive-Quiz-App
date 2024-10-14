@@ -12,7 +12,7 @@ def mock_users():
         User.add(user)
     except Exception as e:
         pass
-    for i in range(1, 100):
+    for i in range(1, 50):
         user = User(f"User {i}", f"pass{randint(100,9999)}",
                     f"{i}@gmail.com", randint(0, 1000))
         User.add(user)
@@ -23,7 +23,7 @@ def mock_quizes():
     from src.models.question import Question
     difficulties = ["Easy", "Medium", "Hard"]
     choices = ["A", "B", "C", "D"]
-    for i in range(1, 10):
+    for i in range(1, 35):
         quiz = Quiz(f"Quiz {i}",
                     "General Knowledge", randint(1, 60))
         for j in range(1, randint(2, 100)):

@@ -68,7 +68,9 @@ class User(Base, UserMixin):
         """
         Update the user's total score.
         """
-        self.Score = sum([quiz.total_score for quiz in self.quizzes])
+        from src.models.users_quizzes import UserQuiz
+        self.Score += sum([userquiz.score for userquiz in db.session.query(
+            UserQuiz).filter_by(user_id=self.ID).all()])
 
     def reset_password(self, new_password: str):
         """

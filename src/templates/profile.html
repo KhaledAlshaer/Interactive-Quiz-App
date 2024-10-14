@@ -28,7 +28,7 @@
 <p>Quiz Score: {{ quiz.total_score }}</p>
 <p>Quiz Time: {{ quiz.time_limit }}</p>
 <p>Questions Number: {{ quiz.number_of_questions }}</p>
-
+<p><a href="{{url_for('quiz_result', quiz_id=quiz.quiz_id)}}">Result</a></p>
 {%endfor %}
 {% endif %}
 
