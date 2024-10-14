@@ -54,8 +54,9 @@ def log_in():
         print(user.is_password(password))
         if user and user.is_password(password):
             login_user(user)
+
             next_page = request.args.get("next")
-            return redirect(url_for(next_page)) if next_page else redirect(url_for("profile"))
+            return redirect(next_page) if next_page else redirect(url_for("profile"))
         flash("Invalid username or password. Please try again.")
 
     return render_template("login.html", form=form)
