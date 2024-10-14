@@ -1,9 +1,10 @@
 
 from calendar import c
 from flask_wtf import FlaskForm, CSRFProtect
-from wtforms import StringField, PasswordField, SubmitField, ValidationError, FieldList, FormField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, ValidationError, FieldList, FormField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Email, Length
 from src import app
+from src.models.quiz import Quiz
 from src.models.user import User
 csrf = CSRFProtect(app)
 
@@ -78,8 +79,13 @@ class newQuizform(FlaskForm):
 
 
 class solveQuizForm(FlaskForm):
-    answers = FieldList(StringField("Answer", validators=[DataRequired()]))
-    submit = SubmitField("Submit Answers")
-    next_question = SubmitField("Next Question")
-    previous_question = SubmitField("Previous Question")
-    submit_quiz = SubmitField("Submit Quiz")
+    answers = FieldList(SelectField("answer", validators=[
+                        DataRequired()]), min_entries=1)
+    submit = SubmitField("Submit Quiz")
+
+    def fill(self, quiz: Quiz):
+        while len(self.answers) < len(quiz.questions):
+            self.answers.append_entry()
+
+        for question, answer in zip(quiz.questions, self.answers):
+            answer.choices = question.choices

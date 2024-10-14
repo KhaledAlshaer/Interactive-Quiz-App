@@ -1,11 +1,12 @@
 from flask import flash, jsonify, request, redirect, url_for, render_template, flash
 from werkzeug.security import generate_password_hash
 
-from src.models import quiz
+from src.models import question, quiz
 from src.models.quiz import Quiz
+from src.models.users_quizzes import UserQuiz
 
-from .models.user import User
-from .models.forms import RegistrationForm, LoginForm, newQuestionform, newQuizform, solveQuizForm
+from src.models.user import User
+from src.models.forms import RegistrationForm, LoginForm, newQuizform, solveQuizForm
 from src import app, login_manager
 from flask_login import login_user, login_required, current_user, logout_user
 login_manager.login_view = "log_in"  # type: ignore
@@ -23,8 +24,9 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         username = form.username.data
-        password = generate_password_hash(form.password.data)
+        password = form.password.data
         email = form.email.data
+        print(username, password)
         User.add(User(username, password, email))
 
         flash("Registration successful! Please log in.")
@@ -48,7 +50,9 @@ def log_in():
         username = form.username.data
         password = form.password.data
         user = User.get_user_by_username(username)
-        if user and user.authenticate(password):
+        print(username, password, user)
+        print(user.is_password(password))
+        if user and user.is_password(password):
             login_user(user)
             next_page = request.args.get("next")
             return redirect(url_for(next_page)) if next_page else redirect(url_for("profile"))
@@ -162,3 +166,27 @@ def quiz_delete(quiz_id: int):
     Quiz.delete(quiz)
     flash(f"Quiz {name} deleted successfully.")
     return redirect(url_for("profile"))
+
+
+@app.route("/quizzes")
+@login_required
+def quizzes():
+
+    return render_template("quizzes.html", quizzes=Quiz.get_all_quizzes())
+
+
+@app.route("/quiz/solve/<int:quiz_id>", methods=["GET", "POST"])
+@login_required
+def quiz_solve(quiz_id):
+    form = solveQuizForm()
+    quiz = Quiz.get_quiz_by_id(quiz_id)
+    form.fill(quiz)
+    if form.validate_on_submit():
+        score = 0
+        for i, question in enumerate(quiz.questions):
+            if question.is_correct(form.answers[i].data):
+                score += question.score
+        flash(f"Your score is {score}")
+        UserQuiz.add(current_user, quiz, score)
+        return redirect(url_for("profile"))
+    return render_template("quiz_solve.html", form=form, questions=quiz.questions, quiz_name=quiz.name, zipped=zip(form.answers, quiz.questions), enumerate=enumerate)

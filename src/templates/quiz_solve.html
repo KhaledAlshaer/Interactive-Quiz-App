@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Solve Quiz: {{ quiz_name }}</h1>
+
+<form method="POST">
+{{ form.hidden_tag() }}
+
+{% for answer, question in zipped %}
+    <h3>Question: {{ question.text }}</h3>
+    {% for i,choice in enumerate(question.choices) %}
+    
+    <p>Option {{i}}: {{ choice }}</p>
+    {% endfor %}
+    <p>{{answer.label}} {{answer()}}</p>
+
+{% endfor %}
+
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+
+{% endblock %}

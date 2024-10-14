@@ -4,6 +4,7 @@
 
 <h1>Profile {{ user.Username }}</h1>
 <h2>Score: {{ user.Score }}</h2>
+<h3><a href="{{url_for('quizzes')}}">solve quizzes</a></h3>
 
 {% if user.is_admin %}
 <a href="{{ url_for('quiz_add') }}">Add New Quiz</a>
