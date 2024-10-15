@@ -7,4 +7,7 @@ from user import User
 class Teacher(User):
     """
     """
-    pass
+    quizzes = relationship("Quiz", back_populates="teacher")
+
+    def __init__(self, Username: str, Password: str, email: str, is_admin: bool = True):
+        super().__init__(Username, Password, email, is_admin)

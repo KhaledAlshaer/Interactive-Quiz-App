@@ -32,8 +32,8 @@ class RegistrationForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
-    password = PasswordField(validators=[DataRequired(), Length(min=8, max=16)])
+    username = StringField("Username", validators=[DataRequired(), Length(min=4, max=20)])
+    password = PasswordField(validators=[DataRequired(), Length(min=2, max=16)])
     submit = SubmitField("Log In")
 
 
