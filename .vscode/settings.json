@@ -16,5 +16,10 @@
         "username": "root",
         "password": "303"
     }
-]
+],
+
+    "code-runner.executorMap": {
+        "python": "python3 run.py"}
+
+
 }
