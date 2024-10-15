@@ -32,8 +32,6 @@ class Quiz(Base):
         "Question", back_populates='quiz', cascade="all, delete-orphan")
     users = relationship("User",  secondary="users_quizzes",
                          back_populates="quizzes", lazy="joined")
-    teacher_id = Column(Integer, ForeignKey("teachers.id"))
-    teacher = relationship("Teacher", back_populates="quizzes")
 
     def __init__(self, name: str, quiz_category: str, time_limit: int):
         """

@@ -40,6 +40,14 @@
         {% endfor %}
         {% endif %}
     </div>
+    <div>
+        {{ form.is_teacher.label }} {{ form.is_teacher() }}
+        {% if form.is_teacher.errors %}
+        {% for error in form.is_teacher.errors %}
+        <h2 style="color: red">{{ error }}</h2>
+        {% endfor %}
+        {% endif %}
+    </div>
 
     <div>
         {{ form.submit() }}

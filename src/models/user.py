@@ -40,20 +40,24 @@ class User(Base, UserMixin):
     ID = Column(Integer, primary_key=True, autoincrement=True)
     Score = Column(Integer, default=0)
     is_admin = Column(Boolean, default=False)
+    is_teacher = Column(Boolean, default=False)
     quizzes = relationship(
         "Quiz",  secondary="users_quizzes", back_populates="users", lazy='dynamic')
 
-    def __init__(self, Username: str, Password: str, email: str, Score: int = 0, is_admin: bool = False):
+    def __init__(self, Username: str, Password: str, email: str, Score: int = 0, is_teacher: bool = False, is_admin: bool = False):
+
         self.Username = Username
         self.Password = self.hash_password(Password)
         self.email = email
+        self.is_teacher = is_teacher
         self.is_admin = is_admin
 
     def hash_password(self, Password: str) -> str:
         """
         Hash the password for secure storage.
         """
-        hashed_password = bcrypt.hashpw(Password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        hashed_password = bcrypt.hashpw(Password.encode(
+            'utf-8'), bcrypt.gensalt()).decode('utf-8')
         return hashed_password
 
     def is_password(self, Password: str) -> bool:

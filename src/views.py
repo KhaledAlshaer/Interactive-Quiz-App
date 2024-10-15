@@ -1,4 +1,5 @@
 from flask import flash, jsonify, request, redirect, url_for, render_template, flash
+from hamcrest import is_
 from werkzeug.security import generate_password_hash
 
 from src.models import question, quiz
@@ -26,8 +27,9 @@ def register():
         username = form.username.data
         password = form.password.data
         email = form.email.data
+        is_teacher = form.is_teacher.data
         print(username, password)
-        User.add(User(username, password, email))
+        User.add(User(username, password, email, is_teacher=is_teacher))
 
         flash("Registration successful! Please log in.")
         return redirect(url_for("log_in"))
@@ -110,6 +112,8 @@ def quiz_add():
                                   question_form.option4.data], question_form.answer.data, question_form.score.data, question_form.difficulty.data)
 
             Quiz.add(quiz)
+            if current_user.is_teacher:
+                UserQuiz.add(current_user, quiz, 0)
             flash(f"Quiz {quiz.name} added successfully.")
             return redirect(url_for("profile"))
     return render_template("quiz_add.html", form=form)
