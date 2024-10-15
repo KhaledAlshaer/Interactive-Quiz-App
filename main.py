@@ -14,3 +14,5 @@ mock_data.mock_quizes()
 # UserQuiz.add_by_ids(50, 1, 386)
 # UserQuiz.add_by_ids(50, 5, 200)
 # UserQuiz.add_by_ids(50, 9, 100)
+
+

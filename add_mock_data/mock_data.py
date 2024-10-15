@@ -6,9 +6,9 @@ def mock_users():
     from src.models.user import User
 
     try:
-        user = User("Ahmed Arafa", "303", "admin1@gmail.com", 8888, True)
+        user = User("Ahmed Arafa", "303", "admin1@gmail.com", 8888, is_admin=True)
         User.add(user)
-        user = User("Khaled Alshaer", "4444", "admin2@gmail.com", 9999, True)
+        user = User("Khaled Alshaer", "4444", "admin2@gmail.com", 9999, is_admin=True)
         User.add(user)
     except Exception as e:
         pass

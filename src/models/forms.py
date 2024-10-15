@@ -1,7 +1,8 @@
 
 from calendar import c
 from flask_wtf import FlaskForm, CSRFProtect
-from wtforms import StringField, PasswordField, SubmitField, ValidationError, FieldList, FormField, IntegerField, SelectField
+from hamcrest import is_
+from wtforms import StringField, PasswordField, SubmitField, ValidationError, FieldList, FormField, IntegerField, SelectField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo
 from src import app
 from src.models.quiz import Quiz
@@ -15,6 +16,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField(validators=[DataRequired(), Length(min=4, max=16)])
     confirm_password = PasswordField(validators=[DataRequired(), EqualTo('password')])
+    is_teacher = BooleanField("Are you a teacher?")
 
     submit = SubmitField("Sign Up")
 
@@ -33,7 +35,7 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
-    password = PasswordField(validators=[DataRequired(), Length(min=8, max=16)])
+    password = PasswordField(validators=[DataRequired(), Length(min=2, max=16)])
     submit = SubmitField("Log In")
 
 

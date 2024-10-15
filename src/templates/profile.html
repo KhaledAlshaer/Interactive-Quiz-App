@@ -3,15 +3,29 @@
 {% block content %}
 
 <h1>Profile {{ user.Username }}</h1>
+{% if not current_user.is_admin and  not current_user.is_teacher%}
+
 <h2>Score: {{ user.Score }}</h2>
 <h3><a href="{{url_for('quizzes')}}">solve quizzes</a></h3>
+{% endif %}
 
-{% if user.is_admin %}
+{% if user.is_admin or current_user.is_teacher %}
 <a href="{{ url_for('quiz_add') }}">Add New Quiz</a>
 {% endif %}
 
 {% if user.is_admin %}
 {% for quiz in quiz_get_all %}
+<h3>Quiz Name: {{ quiz.name }}</h3>
+<p>Quiz Category: {{ quiz.quiz_category }}</p>
+<p>Quiz Score: {{ quiz.total_score }}</p>
+<p>Quiz Time: {{ quiz.time_limit }}</p>
+<p>Questions Number: {{ quiz.number_of_questions }}</p>
+<a href="{{ url_for('quiz_edit', quiz_id=quiz.quiz_id) }}">Edit Quiz</a> |
+<a href="{{ url_for('quiz_delete', quiz_id=quiz.quiz_id) }}">Delete Quiz</a>
+{% endfor %}
+
+{% elif  user.is_teacher %}
+{% for quiz in user.quizzes %}
 <h3>Quiz Name: {{ quiz.name }}</h3>
 <p>Quiz Category: {{ quiz.quiz_category }}</p>
 <p>Quiz Score: {{ quiz.total_score }}</p>
