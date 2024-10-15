@@ -11,9 +11,9 @@ Features
 
 Technologies Used
 
-    Backend: Python (Flask/Django)
+    Backend: Python, Flask
     Frontend: HTML, CSS
-    Database: SQLite/MySQL (or any other relational database)
+    Database: SQLite/MySQL
     Libraries: bcrypt (for password hashing), SQLAlchemy (for ORM)
 
 Setup and Installation
