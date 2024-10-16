@@ -7,7 +7,7 @@ from .base import Base
 
 class DB:
 
-    def __init__(self, db_url: str = "mysql+mysqlconnector://root:303@localhost/quiz"):
+    def __init__(self, db_url: str):
         self.engine = create_engine(db_url)
         self.__session = None
 

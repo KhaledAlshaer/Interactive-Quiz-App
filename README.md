@@ -2,58 +2,84 @@
 
 ## Overview
 
-The Interactive Quiz Application is a web-based platform designed to provide users with a fun and engaging way to test their knowledge on various subjects. It allows users to register, log in, and take quizzes. Users can track their scores, view quiz results, and challenge themselves with different quiz sets.
+The **Interactive Quiz Application** is a web-based platform that provides users with a fun and interactive way to test their knowledge on various topics. Users can register, log in, and take quizzes, track their scores, and view quiz results. Teachers can manage quizzes, including creating, editing, and deleting quizzes.
 
-## Features
+## Key Features
 
-- User Registration & Authentication: Secure registration and login using password hashing for user data protection and flask-login.
-- Responsive Design: The application is designed to work on all screen sizes for an optimal experience on desktops, tablets, and mobile devices.
-- Quiz Management: Users can participate in quizzes, see their scores, and review their answers Teacher can add delete edit see his quizzes.
-- Score Tracking: Track your progress and improve with each quiz attempt.
+- **User Registration & Authentication**: Secure user registration and login using hashed passwords and session management via `flask-login`.
+- **Quiz Participation**: Users can take quizzes, see their scores immediately, and review the correct answers after completion.
+- **Quiz Management for Teachers**: Teachers can create, edit, and delete quizzes, manage questions, and track students' progress.
+- **Score Tracking**: The system allows users to track their progress over multiple quiz attempts.
+- **Responsive Design**: The application is optimized for all screen sizes, providing a smooth experience on desktops, tablets, and mobile devices.
 
-## Technologies Used
+## Technologies
 
-- Backend: Python, Flask
-- Frontend: HTML, flask-wtfs
-- Database: MySQL, sqlalchemy
-- Libraries: flask-bcrypt (for password hashing), SQLAlchemy (for ORM)
+- **Backend**: Python, Flask
+- **Frontend**: HTML, Flask-WTForms
+- **Database**: MySQL, SQLAlchemy ORM
+- **Security**: Flask-Bcrypt for password hashing, CSRF protection via Flask-WTF
+- **Login Management**: Flask-Login for user session management
 
 ## Setup and Installation
 
-- ### Clone the repository:
+### 1. Clone the repository:
 
-        git clone https://github.com/yourusername/Interactive-Quiz-App.git
+```bash
+git clone https://github.com/yourusername/Interactive-Quiz-App.git
+```
 
-- ### Navigate to the project directory:
+### 2. Navigate to the project directory:
 
-            cd Interactive-Quiz-App
+```bash
+cd Interactive-Quiz-App
+```
 
-- ### Install the required dependencies:
+### 3. Install the required dependencies:
 
-            pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
-- ### Set up the database:
+### 4. Set up the database:
 
-        // configrue the url for database in class src/models/DB
-        python main.py
+- Configure your database connection in `src/models/__init__.py`:
 
-- ### Run the application:
+```python
+    db = DB("mysql+mysqlconnector://root:303@localhost/quiz") // defult
+    db = DB("mysql+mysqlconnector://<user>:<password>@localhost/<database_name>") // defult
+```
 
-        python run.py
+### 5. Run the application:
+
+```bash
+python run.py
+```
 
 ## Usage
 
-- Register for a new account.
-- Log in with your credentials.
-- Select a quiz and start answering the questions.
-- View your score after completing the quiz and track your progress.
-- Register as a teacher.
-- add quizess and delete it or edit
+- **Register**: Sign up for a new account using the registration page.
+- **Login**: Access your account using your registered credentials.
+- **Participate in Quizzes**: Start answering questions from available quizzes.
+- **Score & Review**: View your score after completing a quiz and track your progress over time.
+- **Teacher Features**: If registered as a teacher, you can add, edit, or delete quizzes and track the progress of your students.
 
 ## Contributing
 
-Feel free to contribute to this project by creating a pull request. Make sure to follow the contribution guidelines and code of conduct.
-Contributors
+We welcome contributions! To contribute:
 
-Khaled Alshaer
-Ahmed Arafa
+1. Fork the repository.
+2. Create a new branch with your feature or bug fix.
+3. Submit a pull request to the main repository.
+
+Please ensure your code follows best practices and includes sufficient documentation and test cases.
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+---
+
+## Contributors
+
+- Khaled Alshaer
+- Ahmed Arafa
