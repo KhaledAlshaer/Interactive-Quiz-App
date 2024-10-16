@@ -26,11 +26,11 @@ Libraries: flask-bcrypt (for password hashing), SQLAlchemy (for ORM)
 
 ### Navigate to the project directory:
 
-    cd Interactive-Quiz-App
+        cd Interactive-Quiz-App
 
 ### Install the required dependencies:
 
-    pip install -r requirements.txt
+        pip install -r requirements.txt
 
 ### Set up the database:
 
