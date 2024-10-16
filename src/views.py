@@ -1,5 +1,4 @@
 from flask import flash, jsonify, request, redirect, url_for, render_template, flash
-from hamcrest import is_
 from werkzeug.security import generate_password_hash
 
 from src.models import question, quiz
