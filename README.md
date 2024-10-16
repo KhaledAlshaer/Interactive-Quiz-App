@@ -18,9 +18,9 @@ Technologies Used
 
 Setup and Installation
 
-    Clone the repository:
+Clone the repository:
 
-    bash
+bash
 
     git clone https://github.com/KhaledAlshaer/Interactive-Quiz-App.git
 
@@ -28,19 +28,19 @@ Navigate to the project directory:
 
 bash
 
-cd Interactive-Quiz-App
+    cd Interactive-Quiz-App
 
 Install the required dependencies:
 
 bash
 
-pip install -r requirements.txt
+    pip install -r requirements.txt
 
 Set up the database:
 
 bash
 
-python setup_database.py
+    python setup_database.py
 
 Run the application:
 
