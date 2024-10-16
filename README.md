@@ -22,7 +22,7 @@ Setup and Installation
 
     bash
 
-git clone https://github.com/yourusername/Interactive-Quiz-App.git
+git clone https://github.com/KhaledAlshaer/Interactive-Quiz-App.git
 
 Navigate to the project directory:
 
