@@ -138,14 +138,20 @@ def quiz_edit(quiz_id: int):
             quiz.name = form.quiz_name.data
             quiz.quiz_category = form.category.data
             quiz.time_limit = form.time_limit.data
-            quiz.questions = []
 
-            for question_form in form.questions:
-                quiz.add_question(question_form.question.data, [question_form.option1.data, question_form.option2.data, question_form.option3.data,
-                                  question_form.option4.data], question_form.answer.data, question_form.score.data, question_form.difficulty.data)
+            for i, question_form in enumerate(form.questions):
+                if i < len(quiz.questions):
+                    quiz.questions[i].text = question_form.question.data
+                    quiz.questions[i].choices = [question_form.option1.data, question_form.option2.data, question_form.option3.data,
+                                                 question_form.option4.data]
+                    quiz.questions[i].correct_answer = question_form.answer.data
+                    quiz.questions[i].score = question_form.score.data
+                    quiz.questions[i].difficulty = question_form.difficulty.data
+                else:
+                    quiz.add_question(question_form.question.data, [question_form.option1.data, question_form.option2.data, question_form.option3.data,
+                        question_form.option4.data], question_form.answer.data, question_form.score.data, question_form.difficulty.data)
 
-            
-            Quiz.add(quiz)
+            Quiz.update(quiz)
             flash(f"Quiz {quiz.name} updated successfully.")
             return redirect(url_for("profile"))
 

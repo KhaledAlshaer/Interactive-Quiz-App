@@ -174,6 +174,7 @@ class Quiz(Base):
             is_quiz = db.session.query(Quiz).filter_by(
                 quiz_id=quiz.quiz_id).first()
             if is_quiz:
+                quiz.quiz_id = is_quiz.quiz_id
                 db.session.merge(quiz)
                 db.session.commit()
             else:
