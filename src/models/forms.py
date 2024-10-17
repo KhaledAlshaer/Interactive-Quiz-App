@@ -13,7 +13,7 @@ class RegistrationForm(FlaskForm):
     username = StringField("Username", validators=[
                            DataRequired(), Length(min=2, max=20)])
     email = StringField("Email", validators=[DataRequired(), Email()])
-    password = PasswordField(validators=[DataRequired(), Length(min=4, max=16)])
+    password = PasswordField(validators=[DataRequired(), Length(min=2, max=16)])
     confirm_password = PasswordField(validators=[DataRequired(), EqualTo('password')])
     is_teacher = BooleanField("Are you a teacher?")
 
@@ -90,4 +90,5 @@ class solveQuizForm(FlaskForm):
             self.answers.append_entry()
 
         for question, answer in zip(quiz.questions, self.answers):
-            answer.choices = question.choices
+            choices = [""] + question.choices
+            answer.choices = choices
