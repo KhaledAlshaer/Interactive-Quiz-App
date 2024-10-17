@@ -73,10 +73,6 @@ We welcome contributions! To contribute:
 
 Please ensure your code follows best practices and includes sufficient documentation and test cases.
 
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
 ---
 
 ## Contributors
