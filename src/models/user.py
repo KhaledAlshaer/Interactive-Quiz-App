@@ -1,6 +1,5 @@
 import traceback
 import bcrypt
-from werkzeug.security import generate_password_hash, check_password_hash
 from .base import Base
 from src.models import db
 

@@ -1,9 +1,6 @@
-from operator import is_
-import re
 import traceback
 from sqlalchemy import Column, Integer, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
-from src.models import db, question, quiz
+from src.models import db
 
 
 from .base import Base

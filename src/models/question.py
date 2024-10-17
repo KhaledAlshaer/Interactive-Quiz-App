@@ -2,7 +2,6 @@
 from sqlalchemy import JSON, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from .base import Base
-from src.models import db
 
 
 class Question(Base):
