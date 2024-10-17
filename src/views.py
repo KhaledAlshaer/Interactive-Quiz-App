@@ -144,7 +144,8 @@ def quiz_edit(quiz_id: int):
                 quiz.add_question(question_form.question.data, [question_form.option1.data, question_form.option2.data, question_form.option3.data,
                                   question_form.option4.data], question_form.answer.data, question_form.score.data, question_form.difficulty.data)
 
-            Quiz.update(quiz)
+            
+            Quiz.add(quiz)
             flash(f"Quiz {quiz.name} updated successfully.")
             return redirect(url_for("profile"))
 
