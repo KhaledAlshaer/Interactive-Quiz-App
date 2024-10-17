@@ -87,3 +87,13 @@ class UserQuestion(Base):
         result = db.session.query(UserQuestion).filter_by(
             user_id=user_id, quiz_id=quiz_id, question_id=question_id).first()
         return result.is_pass # type: ignore
+    @classmethod
+    def delete_quiz(cls, quiz_id):
+        """delete all user questions for a quiz by quiz_id"""
+        try:
+            db.session.query(UserQuestion).filter_by(quiz_id=quiz_id).delete()
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            tb = traceback.format_exc()
+            print(tb)

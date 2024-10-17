@@ -1,7 +1,5 @@
-from flask import flash, jsonify, request, redirect, url_for, render_template, flash
-from werkzeug.security import generate_password_hash
+from flask import flash, request, redirect, url_for, render_template, flash
 
-from src.models import question, quiz
 from src.models.quiz import Quiz
 from src.models.users_quizzes import UserQuiz, UserQuestion
 
@@ -149,7 +147,7 @@ def quiz_edit(quiz_id: int):
                     quiz.questions[i].difficulty = question_form.difficulty.data
                 else:
                     quiz.add_question(question_form.question.data, [question_form.option1.data, question_form.option2.data, question_form.option3.data,
-                        question_form.option4.data], question_form.answer.data, question_form.score.data, question_form.difficulty.data)
+                                                                    question_form.option4.data], question_form.answer.data, question_form.score.data, question_form.difficulty.data)
 
             Quiz.update(quiz)
             flash(f"Quiz {quiz.name} updated successfully.")
@@ -174,6 +172,7 @@ def quiz_delete(quiz_id: int):
 
     quiz = Quiz.get_quiz_by_id(quiz_id)
     name = quiz.name
+    UserQuestion.delete_quiz(quiz_id)
     Quiz.delete(quiz)
     flash(f"Quiz {name} deleted successfully.")
     return redirect(url_for("profile"))

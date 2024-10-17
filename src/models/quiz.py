@@ -1,5 +1,5 @@
 import traceback
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String
 from .question import Question
 
 from sqlalchemy.orm import relationship
