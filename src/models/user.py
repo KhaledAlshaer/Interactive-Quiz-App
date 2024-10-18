@@ -3,7 +3,7 @@ import bcrypt
 from .base import Base
 from src.models import db
 
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, func
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from src import login_manager
@@ -71,9 +71,13 @@ class User(Base, UserMixin):
         """
         Update the user's total score.
         """
-        from src.models.users_quizzes import UserQuiz
-        self.Score += sum([userquiz.score for userquiz in db.session.query(
-            UserQuiz).filter_by(user_id=self.ID).all()])
+        from src.models.users_quizzes import UserQuestion
+        from src.models.question import Question
+        scores = db.session.query(func.sum(Question.score)).join(
+            UserQuestion, UserQuestion.question_id == Question.question_id).filter(
+            UserQuestion.user_id == self.ID, UserQuestion.is_pass == True).scalar()
+
+        self.Score = scores if scores else 0
 
     def reset_password(self, new_password: str):
         """
