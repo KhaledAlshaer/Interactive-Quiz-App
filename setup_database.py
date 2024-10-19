@@ -1,7 +1,7 @@
 from src.models.user import User
 from src.models import db
 # db.drop_tables()
-# db.create_tables()
+db.create_tables()
 # mock_data.mock_users()
 # mock_data.mock_quizes()
 # User.add(User("user1", "11","1"))
@@ -13,6 +13,6 @@ from src.models import db
 # UserQuiz.add_by_ids(50, 9, 100)
 
 
-u = User.get_user_by_id(1)
+# u = User.get_user_by_id(1)
 
-u.update_score()
+# u.update_score()

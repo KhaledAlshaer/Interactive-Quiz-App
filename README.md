@@ -42,11 +42,21 @@ pip install -r requirements.txt
 
 ### 4. Set up the database:
 
+- If you use docker you can create continer
+```bash
+    docker run -d --name quiz_app -e MYSQL_ROOT_PASSWORD=303 -e MYSQL_DATABASE=quiz -p 3306:3306 mysql
+```
+
 - Configure your database connection in `src/models/__init__.py`:
 
 ```python
-    db = DB("mysql+mysqlconnector://root:303@localhost/quiz") // defult
-    db = DB("mysql+mysqlconnector://<user>:<password>@localhost/<database_name>") // defult
+    db = DB("mysql+mysqlconnector://root:303@localhost/quiz") // if you use docker do not change it
+    db = DB("mysql+mysqlconnector://<user>:<password>@localhost/<database_name>")
+```
+
+- Create tables 
+```bash
+    python setup_database.py
 ```
 
 ### 5. Run the application:
